@@ -1,4 +1,4 @@
-﻿import type { Event } from "../domain";
+﻿import type { Event, EventQuery } from "../domain";
 import type { EventRepository } from "./event.repository";
 import { mockEvents } from "./mock-events";
 
@@ -19,5 +19,43 @@ export class MockEventRepository implements EventRepository {
 
   async getBySlug(slug: string): Promise<Event | null> {
     return mockEvents.find((event) => event.slug === slug) ?? null;
+  }
+
+  async searchPublished(query: EventQuery): Promise<Event[]> {
+    const search = query.search?.trim().toLowerCase();
+    const category = query.category?.trim().toLowerCase();
+    const city = query.city?.trim().toLowerCase();
+
+    return mockEvents.filter((event) => {
+      if (event.status !== "published") {
+        return false;
+      }
+
+      if (category && event.category.toLowerCase() !== category) {
+        return false;
+      }
+
+      if (city && event.location.city.toLowerCase() !== city) {
+        return false;
+      }
+
+      if (!search) {
+        return true;
+      }
+
+      const searchableText = [
+        event.titleAr,
+        event.titleEn,
+        event.descriptionAr,
+        event.descriptionEn,
+        event.location.city,
+        event.location.venue,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return searchableText.includes(search);
+    });
   }
 }

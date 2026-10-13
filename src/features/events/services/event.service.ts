@@ -1,4 +1,4 @@
-﻿import type { Event } from "../domain";
+﻿import type { Event, EventQuery } from "../domain";
 import type { EventRepository } from "../data";
 
 export class EventService {
@@ -14,5 +14,15 @@ export class EventService {
 
   getEventBySlug(slug: string): Promise<Event | null> {
     return this.repository.getBySlug(slug);
+  }
+
+  searchPublishedEvents(query: EventQuery): Promise<Event[]> {
+    return this.repository.searchPublished(query);
+  }
+
+  async getPublishedCategories(): Promise<string[]> {
+    const events = await this.repository.getPublished();
+
+    return [...new Set(events.map((event) => event.category))].sort();
   }
 }
