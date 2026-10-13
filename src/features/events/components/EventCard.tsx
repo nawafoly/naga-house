@@ -1,53 +1,111 @@
 ﻿import Image from "next/image";
-import type { Event } from "../domain";
+import Link from "next/link";
+
+import { getEventCategoryLabel, type Event } from "../domain";
 
 interface EventCardProps {
   event: Event;
+  eager?: boolean;
 }
 
-export function EventCard({ event }: EventCardProps) {
+function formatEventDate(value: string) {
+  return new Intl.DateTimeFormat("ar-SA", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(value));
+}
+
+export function EventCard({
+  event,
+  eager = false,
+}: EventCardProps) {
+  const price =
+    event.price.amountFrom !== undefined
+      ? `يبدأ من ${event.price.amountFrom} ر.س`
+      : "السعر لاحقًا";
+
   return (
-    <article className="overflow-hidden rounded-3xl border border-white/10 bg-white/5">
-      <div className="relative aspect-[4/5] w-full">
-        <Image
-          src={event.imageUrl}
-          alt={event.titleAr}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover"
-        />
-      </div>
+    <Link
+      href={`/events/${event.slug}`}
+      className="group block"
+    >
+      <article className="overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.035] transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.055]">
+        <div className="relative aspect-[4/5] overflow-hidden">
+          <Image
+            src={event.imageUrl}
+            alt={event.titleAr}
+            fill
+            loading={eager ? "eager" : "lazy"}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover transition duration-500 group-hover:scale-[1.035]"
+          />
 
-      <div className="p-5">
-        <div className="mb-3 flex items-center justify-between gap-4">
-          <span className="text-sm text-white/50">
-            {event.location.city}
-          </span>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/5 to-black/10" />
 
-          {event.price.amountFrom !== undefined && (
-            <span className="text-sm font-medium">
-              يبدأ من {event.price.amountFrom} ر.س
+          <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-5">
+            <span className="rounded-full border border-white/15 bg-black/45 px-4 py-2 text-sm font-medium text-white backdrop-blur-md">
+              {getEventCategoryLabel(event.category)}
             </span>
-          )}
+
+            {event.featured && (
+              <span className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-black">
+                مميز
+              </span>
+            )}
+          </div>
+
+          <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+            <p className="mb-2 text-sm font-medium text-white/65">
+              {formatEventDate(event.startAt)}
+            </p>
+
+            <h2 className="text-2xl font-bold leading-tight text-white sm:text-3xl">
+              {event.titleAr}
+            </h2>
+          </div>
         </div>
 
-        <h2 className="text-2xl font-semibold">
-          {event.titleAr}
-        </h2>
+        <div className="p-5 sm:p-6">
+          <div className="flex items-start justify-between gap-5">
+            <div className="min-w-0">
+              <p className="text-sm text-white/40">
+                المكان
+              </p>
 
-        {event.descriptionAr && (
-          <p className="mt-3 line-clamp-3 text-sm leading-7 text-white/60">
-            {event.descriptionAr}
-          </p>
-        )}
+              <p className="mt-1 truncate text-base font-medium text-white/80">
+                {event.location.venue}
+              </p>
+            </div>
 
-        <a
-          href={`/events/${event.slug}`}
-          className="mt-6 inline-flex rounded-full bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-white/80"
-        >
-          عرض التفاصيل
-        </a>
-      </div>
-    </article>
+            <div className="shrink-0 text-left">
+              <p className="text-sm text-white/40">
+                التذاكر
+              </p>
+
+              <p className="mt-1 text-base font-semibold text-white">
+                {price}
+              </p>
+            </div>
+          </div>
+
+          {event.descriptionAr && (
+            <p className="mt-5 line-clamp-2 text-sm leading-7 text-white/45">
+              {event.descriptionAr}
+            </p>
+          )}
+
+          <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
+            <span className="text-base font-semibold text-white">
+              عرض التفاصيل
+            </span>
+
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-lg text-black transition duration-300 group-hover:-translate-x-1">
+              ←
+            </span>
+          </div>
+        </div>
+      </article>
+    </Link>
   );
 }
