@@ -1,4 +1,7 @@
 ﻿import type { Metadata } from "next";
+
+import { SiteHeader } from "@/components/layout";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,7 +16,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body>{children}</body>
+      <body className="bg-black text-white">
+        <SiteHeader />
+        {children}
+      </body>
     </html>
   );
 }
