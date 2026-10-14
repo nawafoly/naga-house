@@ -1,6 +1,9 @@
 import Link from "next/link";
 
-import { EventCard } from "@/features/events/components";
+import {
+  EventCard,
+  EventLiveSearch,
+} from "@/features/events/components";
 import { MockEventRepository } from "@/features/events/data";
 import { getEventCategoryLabel } from "@/features/events/domain";
 import { EventService } from "@/features/events/services";
@@ -46,14 +49,16 @@ export default async function EventsPage({
 
     const queryString = query.toString();
 
-    return queryString ? `/events?${queryString}` : "/events";
+    return queryString
+      ? `/events?${queryString}`
+      : "/events";
   }
 
   return (
     <main className="min-h-screen bg-black text-white">
       <section className="mx-auto w-full max-w-[1600px] px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
         <div className="mb-14 lg:mb-16">
-          <p className="mb-5 text-base font-medium uppercase tracking-[0.45em] text-white/40 sm:text-lg">
+          <p className="mb-5 text-base font-medium uppercase tracking-[0.45em] text-white/55 sm:text-lg">
             JEDDAH EVENTS
           </p>
 
@@ -61,78 +66,56 @@ export default async function EventsPage({
             جميع الفعاليات
           </h1>
 
-          <p className="mt-6 max-w-4xl text-lg leading-9 text-white/55 sm:text-xl lg:text-2xl lg:leading-10">
-            اكتشف أفضل الفعاليات والتجارب المختارة في جدة، واستعرض التفاصيل
-            واحجز مباشرة من خلال منصة التذاكر الرسمية.
+          <p className="mt-6 max-w-4xl text-lg leading-9 text-white/70 sm:text-xl lg:text-2xl lg:leading-10">
+            اكتب اسم المسرحية أو الحفلة أو التجربة، وبتظهر لك النتائج
+            مباشرة أثناء الكتابة.
           </p>
         </div>
 
-        <div className="mb-12 rounded-[36px] border border-white/10 bg-white/[0.035] p-5 sm:p-6 lg:p-7">
-          <form
-            method="GET"
-            className="flex flex-col gap-4 sm:flex-row"
-          >
-            {category && (
-              <input
-                type="hidden"
-                name="category"
-                value={category}
-              />
-            )}
+        <div className="relative z-40 mb-8">
+          <EventLiveSearch />
+        </div>
 
-            <input
-              type="search"
-              name="search"
-              defaultValue={search}
-              placeholder="ابحث عن فعالية أو مكان..."
-              className="h-16 flex-1 rounded-2xl border border-white/10 bg-black/60 px-6 text-lg text-white outline-none transition placeholder:text-white/25 hover:border-white/20 focus:border-white/40 focus:bg-black"
-            />
+        <div className="mb-12 rounded-[32px] border border-white/10 bg-white/[0.035] p-5 sm:p-6">
+          <p className="mb-4 text-sm font-medium text-white/55">
+            تصفية حسب التصنيف
+          </p>
 
-            <button
-              type="submit"
-              className="h-16 rounded-2xl bg-white px-10 text-base font-semibold text-black transition hover:bg-white/85 active:scale-[0.98]"
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href={getCategoryHref("")}
+              className={`rounded-full border px-6 py-3 text-base font-medium transition ${
+                !category
+                  ? "border-white bg-white text-black"
+                  : "border-white/10 bg-white/5 text-white/70 hover:border-white/25 hover:bg-white/10 hover:text-white"
+              }`}
             >
-              بحث
-            </button>
-          </form>
+              الكل
+            </Link>
 
-          <div className="mt-6 border-t border-white/10 pt-6">
-            <div className="flex flex-wrap gap-3">
-              <Link
-                href={getCategoryHref("")}
-                className={`rounded-full border px-6 py-3 text-base font-medium transition ${
-                  !category
-                    ? "border-white bg-white text-black"
-                    : "border-white/10 bg-white/5 text-white/60 hover:border-white/25 hover:bg-white/10 hover:text-white"
-                }`}
-              >
-                الكل
-              </Link>
+            {categories.map((item) => {
+              const isActive = category === item;
 
-              {categories.map((item) => {
-                const isActive = category === item;
-
-                return (
-                  <Link
-                    key={item}
-                    href={getCategoryHref(item)}
-                    className={`rounded-full border px-6 py-3 text-base font-medium transition ${
-                      isActive
-                        ? "border-white bg-white text-black"
-                        : "border-white/10 bg-white/5 text-white/60 hover:border-white/25 hover:bg-white/10 hover:text-white"
-                    }`}
-                  >
-                    {getEventCategoryLabel(item)}
-                  </Link>
-                );
-              })}
-            </div>
+              return (
+                <Link
+                  key={item}
+                  href={getCategoryHref(item)}
+                  className={`rounded-full border px-6 py-3 text-base font-medium transition ${
+                    isActive
+                      ? "border-white bg-white text-black"
+                      : "border-white/10 bg-white/5 text-white/70 hover:border-white/25 hover:bg-white/10 hover:text-white"
+                  }`}
+                >
+                  {getEventCategoryLabel(item)}
+                </Link>
+              );
+            })}
           </div>
         </div>
 
         {(search || category) && (
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-            <p className="text-base text-white/45">
+            <p className="text-base text-white/60">
               عدد النتائج:{" "}
               <span className="font-semibold text-white">
                 {events.length}
@@ -141,9 +124,9 @@ export default async function EventsPage({
 
             <Link
               href="/events"
-              className="rounded-full border border-white/10 px-5 py-2.5 text-base text-white/55 transition hover:border-white/25 hover:bg-white/5 hover:text-white"
+              className="rounded-full border border-white/10 px-5 py-2.5 text-base text-white/70 transition hover:border-white/25 hover:bg-white/5 hover:text-white"
             >
-              مسح البحث والتصنيفات
+              مسح الفلاتر
             </Link>
           </div>
         )}
@@ -154,7 +137,7 @@ export default async function EventsPage({
               <EventCard
                 key={event.id}
                 event={event}
-                eager={index === 0}
+                eager={index < 3}
               />
             ))}
           </div>
@@ -164,13 +147,13 @@ export default async function EventsPage({
               ما لقينا فعاليات مطابقة
             </h2>
 
-            <p className="mt-5 text-lg text-white/45">
+            <p className="mt-5 text-lg text-white/65">
               جرّب كلمة بحث مختلفة أو اختر تصنيفًا آخر.
             </p>
 
             <Link
               href="/events"
-              className="mt-8 inline-flex rounded-full bg-white px-7 py-3.5 text-base font-semibold text-black transition hover:bg-white/85"
+              className="mt-8 inline-flex rounded-full bg-white px-7 py-3.5 text-base font-semibold text-black"
             >
               عرض كل الفعاليات
             </Link>

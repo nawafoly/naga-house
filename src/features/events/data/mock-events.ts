@@ -2,233 +2,170 @@
 
 export const mockEvents: Event[] = [
   {
-    id: "evt_001",
-    slug: "jeddah-music-night",
+    id: "evt_black_coffee_2026",
+    slug: "black-coffee-jeddah-2026",
 
-    titleAr: "ليلة جدة الموسيقية",
-    titleEn: "Jeddah Music Night",
+    titleAr: "بلاك كوفي في جدة",
+    titleEn: "MDLBEAST Presents x IN ACT: Black Coffee",
 
     descriptionAr:
-      "ليلة موسيقية وتجربة ترفيهية في جدة ضمن بيانات NAGA HOUSE التجريبية.",
+      "ليلة موسيقية في أونيكس أرينا تجمع Black Coffee مع DISH DASH وBKR B2B RDJ ضمن تجربة موسيقية إلكترونية في جدة.",
 
     imageUrl:
-      "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1200&q=80",
+      "https://www.datocms-assets.com/117767/1790098350-1080x1080-3.jpg?auto=format&fit=max&q=80&w=1600",
 
     coverImageUrl:
-      "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1600&q=80",
+      "https://www.datocms-assets.com/117767/1790098350-1080x1080-3.jpg?auto=format&fit=max&q=80&w=2000",
 
     category: "music",
 
     location: {
       city: "Jeddah",
-      venue: "Jeddah Superdome",
+      venue: "Onyx Arena",
     },
 
-    startAt: "2026-10-30T18:00:00.000Z",
-    endAt: "2026-10-30T23:00:00.000Z",
+    startAt: "2026-10-23T15:00:00.000Z",
+    endAt: "2026-10-24T00:30:00.000Z",
 
     price: {
-      amountFrom: 150,
+      amountFrom: 450,
       currency: "SAR",
     },
 
-    ticketProvider: "webook",
-    ticketUrl: "https://webook.com/",
+    ticketProvider: "other",
+    ticketUrl:
+      "https://www.nofomo.com/events/mdlbeast-presents-x-in-act-black-coffee",
 
     featured: true,
     status: "published",
 
-    createdAt: "2026-10-12T00:00:00.000Z",
-    updatedAt: "2026-10-12T00:00:00.000Z",
+    createdAt: "2026-10-14T00:00:00.000Z",
+    updatedAt: "2026-10-14T00:00:00.000Z",
   },
 
   {
-    id: "evt_002",
-    slug: "jeddah-theater-show",
+    id: "evt_onyx_two_nights_2026",
+    slug: "two-nights-at-onyx-2026",
 
-    titleAr: "ليلة المسرح",
-    titleEn: "Theater Night",
+    titleAr: "ليلتان في أونيكس",
+    titleEn: "MDLBEAST Presents: Two Nights at Onyx",
 
     descriptionAr:
-      "عرض مسرحي ترفيهي للعائلة في جدة.",
+      "ليلتان من الموسيقى الإلكترونية في أونيكس أرينا بمشاركة أكثر من 11 فنانًا، من بينهم BLOND:ISH وBoris Brejcha وSteve Angello وLoco Dice.",
 
     imageUrl:
-      "https://images.unsplash.com/photo-1507924538820-ede94a04019d?auto=format&fit=crop&w=1200&q=80",
+      "https://www.datocms-assets.com/117767/1790254386-oct29-30-lineup-1x1.jpg?auto=format&fit=max&q=80&w=1600",
 
-    category: "theater",
+    coverImageUrl:
+      "https://www.datocms-assets.com/117767/1790254386-oct29-30-lineup-1x1.jpg?auto=format&fit=max&q=80&w=2000",
+
+    category: "music",
 
     location: {
       city: "Jeddah",
-      venue: "Jeddah Theater",
+      venue: "Onyx Arena",
     },
 
-    startAt: "2026-11-05T17:30:00.000Z",
-    endAt: "2026-11-05T20:30:00.000Z",
+    startAt: "2026-10-29T16:00:00.000Z",
+    endAt: "2026-10-31T01:00:00.000Z",
 
     price: {
-      amountFrom: 95,
+      amountFrom: 250,
       currency: "SAR",
     },
 
-    ticketProvider: "webook",
-    ticketUrl: "https://webook.com/",
+    ticketProvider: "other",
+    ticketUrl:
+      "https://www.nofomo.com/events/mdlbeast-presents-two-nights-at-onyx",
 
     featured: true,
     status: "published",
 
-    createdAt: "2026-10-12T00:00:00.000Z",
-    updatedAt: "2026-10-12T00:00:00.000Z",
+    createdAt: "2026-10-14T00:00:00.000Z",
+    updatedAt: "2026-10-14T00:00:00.000Z",
   },
 
   {
-    id: "evt_003",
-    slug: "jeddah-sports-experience",
+    id: "evt_oia_beach_2026",
+    slug: "ia-exclusive-oia-beach-2026",
 
-    titleAr: "تجربة جدة الرياضية",
-    titleEn: "Jeddah Sports Experience",
+    titleAr: "I/A Exclusive في OIA Beach",
+    titleEn: "I/A Exclusive: OIA Beach",
 
     descriptionAr:
-      "تجربة رياضية جماهيرية تضم أنشطة وتحديات متنوعة.",
+      "ليلة موسيقية على شاطئ OIA في جدة يتصدرها VANCO بمشاركة DISH DASH وEYAD وNAHAR وCAYAN.",
 
     imageUrl:
-      "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80",
+      "https://www.datocms-assets.com/117767/1790611403-1080x1080.png?auto=format&fit=max&q=80&w=1600",
 
-    category: "sports",
+    coverImageUrl:
+      "https://www.datocms-assets.com/117767/1790611403-1080x1080.png?auto=format&fit=max&q=80&w=2000",
+
+    category: "music",
 
     location: {
       city: "Jeddah",
-      venue: "King Abdullah Sports City",
+      venue: "OIA Beach",
     },
 
-    startAt: "2026-11-12T15:00:00.000Z",
-    endAt: "2026-11-12T21:00:00.000Z",
+    startAt: "2026-10-30T16:00:00.000Z",
+    endAt: "2026-10-31T00:30:00.000Z",
 
     price: {
-      amountFrom: 75,
+      amountFrom: 500,
       currency: "SAR",
     },
 
-    ticketProvider: "webook",
-    ticketUrl: "https://webook.com/",
+    ticketProvider: "other",
+    ticketUrl:
+      "https://www.nofomo.com/events/ia-exclusive-oia-beach",
 
     featured: false,
     status: "published",
 
-    createdAt: "2026-10-12T00:00:00.000Z",
-    updatedAt: "2026-10-12T00:00:00.000Z",
+    createdAt: "2026-10-14T00:00:00.000Z",
+    updatedAt: "2026-10-14T00:00:00.000Z",
   },
 
   {
-    id: "evt_004",
-    slug: "jeddah-family-festival",
+    id: "evt_in_act_anniversary_2026",
+    slug: "in-act-anniversary-act-xi-2026",
 
-    titleAr: "مهرجان العائلة",
-    titleEn: "Family Festival",
+    titleAr: "الذكرى السنوية لـ IN ACT",
+    titleEn: "IN ACT Anniversary - ACT XI",
 
     descriptionAr:
-      "فعالية عائلية في جدة تتضمن ألعابًا وتجارب ترفيهية للأطفال والعائلة.",
+      "احتفال IN ACT بالذكرى السنوية الثانية في جدة، بليلة موسيقية ممتدة في عبادي الجوهر أرينا.",
 
     imageUrl:
-      "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1200&q=80",
+      "https://www.datocms-assets.com/117767/1784119099-768-x-768.png?auto=format&fit=max&q=80&w=1600",
 
-    category: "family",
+    coverImageUrl:
+      "https://www.datocms-assets.com/117767/1784119099-768-x-768.png?auto=format&fit=max&q=80&w=2000",
+
+    category: "music",
 
     location: {
       city: "Jeddah",
-      venue: "Jeddah Waterfront",
+      venue: "Abadi Al Johar Arena",
     },
 
-    startAt: "2026-11-20T14:00:00.000Z",
-    endAt: "2026-11-20T22:00:00.000Z",
+    startAt: "2026-11-27T14:00:00.000Z",
+    endAt: "2026-11-28T00:30:00.000Z",
 
     price: {
-      amountFrom: 50,
+      amountFrom: 250,
       currency: "SAR",
     },
 
-    ticketProvider: "webook",
-    ticketUrl: "https://webook.com/",
+    ticketProvider: "other",
+    ticketUrl:
+      "https://www.nofomo.com/events/in-act-anniversary-act-xi",
 
     featured: true,
     status: "published",
 
-    createdAt: "2026-10-12T00:00:00.000Z",
-    updatedAt: "2026-10-12T00:00:00.000Z",
-  },
-
-  {
-    id: "evt_005",
-    slug: "jeddah-food-experience",
-
-    titleAr: "تجربة مذاقات جدة",
-    titleEn: "Taste of Jeddah",
-
-    descriptionAr:
-      "تجربة مطاعم ومذاقات متنوعة تجمع عددًا من التجارب المحلية في جدة.",
-
-    imageUrl:
-      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
-
-    category: "dining",
-
-    location: {
-      city: "Jeddah",
-      venue: "Jeddah Yacht Club",
-    },
-
-    startAt: "2026-11-27T16:00:00.000Z",
-    endAt: "2026-11-27T23:00:00.000Z",
-
-    price: {
-      amountFrom: 120,
-      currency: "SAR",
-    },
-
-    ticketProvider: "webook",
-    ticketUrl: "https://webook.com/",
-
-    featured: false,
-    status: "published",
-
-    createdAt: "2026-10-12T00:00:00.000Z",
-    updatedAt: "2026-10-12T00:00:00.000Z",
-  },
-
-  {
-    id: "evt_006",
-    slug: "jeddah-entertainment-zone",
-
-    titleAr: "منطقة الترفيه",
-    titleEn: "Entertainment Zone",
-
-    descriptionAr:
-      "منطقة ترفيهية تضم ألعابًا وتجارب متنوعة ومناسبة لمجموعات الأصدقاء.",
-
-    imageUrl:
-      "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80",
-
-    category: "entertainment",
-
-    location: {
-      city: "Jeddah",
-      venue: "Jeddah Promenade",
-    },
-
-    startAt: "2026-12-03T16:00:00.000Z",
-    endAt: "2026-12-03T23:30:00.000Z",
-
-    price: {
-      amountFrom: 85,
-      currency: "SAR",
-    },
-
-    ticketProvider: "webook",
-    ticketUrl: "https://webook.com/",
-
-    featured: false,
-    status: "published",
-
-    createdAt: "2026-10-12T00:00:00.000Z",
-    updatedAt: "2026-10-12T00:00:00.000Z",
+    createdAt: "2026-10-14T00:00:00.000Z",
+    updatedAt: "2026-10-14T00:00:00.000Z",
   },
 ];
