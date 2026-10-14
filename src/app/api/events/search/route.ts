@@ -73,7 +73,6 @@ export async function GET(request: NextRequest) {
       imageUrl: event.imageUrl,
       category: event.category,
       venue: event.location.venue,
-      startAt: event.startAt,
       priceFrom: event.price.amountFrom,
     })),
   });

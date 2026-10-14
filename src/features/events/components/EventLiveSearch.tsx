@@ -14,7 +14,6 @@ interface SearchEvent {
   imageUrl: string;
   category: string;
   venue: string;
-  startAt: string;
   priceFrom?: number;
 }
 
