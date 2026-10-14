@@ -1,4 +1,4 @@
-﻿export type EventStatus =
+export type EventStatus =
   | "draft"
   | "published"
   | "sold_out"
@@ -9,6 +9,7 @@ export type TicketProvider =
   | "webook"
   | "ticketmx"
   | "platinumlist"
+  | "nofomo"
   | "direct"
   | "other";
 

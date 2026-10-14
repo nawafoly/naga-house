@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { CuratedEventRepository } from "@/features/events/data";
 import {
   getEventCategoryLabel,
-  isSpecificTicketUrl,
+  isTrustedTicketUrl,
 } from "@/features/events/domain";
 import { EventService } from "@/features/events/services";
 
@@ -61,7 +61,8 @@ export default async function EventPage({
     ? `${event.price.amountFrom} ر.س`
     : "يحدد لاحقًا";
 
-  const canBook = isSpecificTicketUrl(
+  const canBook = isTrustedTicketUrl(
+    event.ticketProvider,
     event.ticketUrl
   );
 

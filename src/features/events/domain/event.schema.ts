@@ -1,4 +1,4 @@
-﻿import { z } from "zod";
+import { z } from "zod";
 
 export const eventStatusSchema = z.enum([
   "draft",
@@ -12,6 +12,7 @@ export const ticketProviderSchema = z.enum([
   "webook",
   "ticketmx",
   "platinumlist",
+  "nofomo",
   "direct",
   "other",
 ]);

@@ -32,7 +32,7 @@ export const curatedEvents: Event[] = [
       currency: "SAR",
     },
 
-    ticketProvider: "other",
+    ticketProvider: "nofomo",
     ticketUrl:
       "https://www.nofomo.com/events/mdlbeast-presents-x-in-act-black-coffee",
 
@@ -74,7 +74,7 @@ export const curatedEvents: Event[] = [
       currency: "SAR",
     },
 
-    ticketProvider: "other",
+    ticketProvider: "nofomo",
     ticketUrl:
       "https://www.nofomo.com/events/mdlbeast-presents-two-nights-at-onyx",
 
@@ -116,7 +116,7 @@ export const curatedEvents: Event[] = [
       currency: "SAR",
     },
 
-    ticketProvider: "other",
+    ticketProvider: "nofomo",
     ticketUrl:
       "https://www.nofomo.com/events/ia-exclusive-oia-beach",
 
@@ -158,7 +158,7 @@ export const curatedEvents: Event[] = [
       currency: "SAR",
     },
 
-    ticketProvider: "other",
+    ticketProvider: "nofomo",
     ticketUrl:
       "https://www.nofomo.com/events/in-act-anniversary-act-xi",
 
