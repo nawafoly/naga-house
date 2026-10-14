@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 
 import {
@@ -18,6 +18,7 @@ function formatEventDate(value: string) {
       day: "numeric",
       month: "long",
       year: "numeric",
+      timeZone: "Asia/Riyadh",
     }
   ).format(new Date(value));
 }

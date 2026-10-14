@@ -29,6 +29,7 @@ function formatEventDate(value: string) {
       day: "numeric",
       month: "long",
       year: "numeric",
+      timeZone: "Asia/Riyadh",
     }
   ).format(new Date(value));
 }
@@ -37,6 +38,7 @@ function formatEventTime(value: string) {
   return new Intl.DateTimeFormat("ar-SA", {
     hour: "numeric",
     minute: "2-digit",
+    timeZone: "Asia/Riyadh",
   }).format(new Date(value));
 }
 
