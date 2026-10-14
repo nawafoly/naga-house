@@ -1,18 +1,67 @@
-import type { Event, EventQuery } from "../domain";
+import {
+  eventSchema,
+  isTrustedTicketUrl,
+  type Event,
+  type EventQuery,
+} from "../domain";
+
 import type { EventRepository } from "./event.repository";
+
+import { curatedEvents } from "./curated-events";
 import { diningEvents } from "./dining-events";
 import { entertainmentEvents } from "./entertainment-events";
 import { familyEvents } from "./family-events";
-import { curatedEvents } from "./curated-events";
 
-const events: Event[] = [
+function validateCuratedEvents(
+  sourceEvents: Event[]
+): Event[] {
+  const validatedEvents =
+    eventSchema.array().parse(sourceEvents);
+
+  const ids = new Set<string>();
+  const slugs = new Set<string>();
+
+  for (const event of validatedEvents) {
+    if (ids.has(event.id)) {
+      throw new Error(
+        `Duplicate event id: ${event.id}`
+      );
+    }
+
+    if (slugs.has(event.slug)) {
+      throw new Error(
+        `Duplicate event slug: ${event.slug}`
+      );
+    }
+
+    if (
+      !isTrustedTicketUrl(
+        event.ticketProvider,
+        event.ticketUrl
+      )
+    ) {
+      throw new Error(
+        `Untrusted ticket URL for event: ${event.slug}`
+      );
+    }
+
+    ids.add(event.id);
+    slugs.add(event.slug);
+  }
+
+  return validatedEvents;
+}
+
+const events = validateCuratedEvents([
   ...curatedEvents,
   ...entertainmentEvents,
   ...familyEvents,
   ...diningEvents,
-];
+]);
 
-export class CuratedEventRepository implements EventRepository {
+export class CuratedEventRepository
+  implements EventRepository
+{
   async getAll(): Promise<Event[]> {
     return events;
   }
@@ -31,10 +80,13 @@ export class CuratedEventRepository implements EventRepository {
     );
   }
 
-  async getBySlug(slug: string): Promise<Event | null> {
+  async getBySlug(
+    slug: string
+  ): Promise<Event | null> {
     return (
-      events.find((event) => event.slug === slug) ??
-      null
+      events.find(
+        (event) => event.slug === slug
+      ) ?? null
     );
   }
 
