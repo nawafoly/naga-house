@@ -4,13 +4,13 @@ import {
   EventCard,
   EventLiveSearch,
 } from "@/features/events/components";
-import { MockEventRepository } from "@/features/events/data";
+import { CuratedEventRepository } from "@/features/events/data";
 import { getEventCategoryLabel } from "@/features/events/domain";
 import { EventService } from "@/features/events/services";
 
 export const instant = false;
 
-const eventService = new EventService(new MockEventRepository());
+const eventService = new EventService(new CuratedEventRepository());
 
 interface EventsPageProps {
   searchParams: Promise<{

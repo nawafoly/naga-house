@@ -1,6 +1,6 @@
-﻿import type { Event } from "../domain";
+import type { Event } from "../domain";
 
-export const mockEvents: Event[] = [
+export const curatedEvents: Event[] = [
   {
     id: "evt_black_coffee_2026",
     slug: "black-coffee-jeddah-2026",

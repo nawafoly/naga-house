@@ -1,11 +1,11 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 
 import { HeroSection } from "@/components/layout";
 import { EventCard } from "@/features/events/components";
-import { MockEventRepository } from "@/features/events/data";
+import { CuratedEventRepository } from "@/features/events/data";
 import { EventService } from "@/features/events/services";
 
-const eventService = new EventService(new MockEventRepository());
+const eventService = new EventService(new CuratedEventRepository());
 
 export default async function HomePage() {
   const events = await eventService.getFeaturedEvents();

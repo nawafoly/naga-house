@@ -1,8 +1,8 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { MockEventRepository } from "@/features/events/data";
+import { CuratedEventRepository } from "@/features/events/data";
 import {
   getEventCategoryLabel,
   isSpecificTicketUrl,
@@ -12,7 +12,7 @@ import { EventService } from "@/features/events/services";
 export const instant = false;
 
 const eventService = new EventService(
-  new MockEventRepository()
+  new CuratedEventRepository()
 );
 
 interface EventPageProps {

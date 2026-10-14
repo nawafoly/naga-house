@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { MockEventRepository } from "@/features/events/data";
+import { CuratedEventRepository } from "@/features/events/data";
 import { EventService } from "@/features/events/services";
 
-const eventService = new EventService(new MockEventRepository());
+const eventService = new EventService(new CuratedEventRepository());
 
 function normalizeSearchValue(value: string) {
   return value

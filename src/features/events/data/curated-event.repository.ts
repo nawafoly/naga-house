@@ -1,18 +1,18 @@
-﻿import type { Event, EventQuery } from "../domain";
+import type { Event, EventQuery } from "../domain";
 import type { EventRepository } from "./event.repository";
 import { diningEvents } from "./dining-events";
 import { entertainmentEvents } from "./entertainment-events";
 import { familyEvents } from "./family-events";
-import { mockEvents } from "./mock-events";
+import { curatedEvents } from "./curated-events";
 
 const events: Event[] = [
-  ...mockEvents,
+  ...curatedEvents,
   ...entertainmentEvents,
   ...familyEvents,
   ...diningEvents,
 ];
 
-export class MockEventRepository implements EventRepository {
+export class CuratedEventRepository implements EventRepository {
   async getAll(): Promise<Event[]> {
     return events;
   }

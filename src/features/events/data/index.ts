@@ -1,3 +1,3 @@
-﻿export * from "./event.repository";
-export * from "./mock-event.repository";
-export * from "./mock-events";
+export * from "./event.repository";
+export * from "./curated-event.repository";
+export * from "./curated-events";

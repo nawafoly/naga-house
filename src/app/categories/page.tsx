@@ -1,10 +1,10 @@
 import Link from "next/link";
 
-import { MockEventRepository } from "@/features/events/data";
+import { CuratedEventRepository } from "@/features/events/data";
 import { eventCategoryLabels } from "@/features/events/domain";
 import { EventService } from "@/features/events/services";
 
-const eventService = new EventService(new MockEventRepository());
+const eventService = new EventService(new CuratedEventRepository());
 
 const categoryDescriptions: Record<string, string> = {
   music: "حفلات، موسيقى، دي جي وتجارب موسيقية مباشرة.",
