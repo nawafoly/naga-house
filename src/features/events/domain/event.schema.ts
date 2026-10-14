@@ -28,36 +28,50 @@ export const eventPriceSchema = z.object({
   currency: z.literal("SAR"),
 });
 
-export const eventSchema = z.object({
-  id: z.string().min(1),
-  slug: z.string().min(1),
+export const eventSchema = z
+  .object({
+    id: z.string().min(1),
+    slug: z.string().min(1),
 
-  titleAr: z.string().min(1),
-  titleEn: z.string().min(1).optional(),
+    titleAr: z.string().min(1),
+    titleEn: z.string().min(1).optional(),
 
-  descriptionAr: z.string().optional(),
-  descriptionEn: z.string().optional(),
+    descriptionAr: z.string().optional(),
+    descriptionEn: z.string().optional(),
 
-  imageUrl: z.url(),
-  coverImageUrl: z.url().optional(),
+    imageUrl: z.url(),
+    coverImageUrl: z.url().optional(),
 
-  category: z.string().min(1),
+    category: z.string().min(1),
 
-  location: eventLocationSchema,
+    location: eventLocationSchema,
 
-  startAt: z.iso.datetime(),
-  endAt: z.iso.datetime().optional(),
+    startAt: z.iso.datetime().optional(),
+    endAt: z.iso.datetime().optional(),
+    scheduleLabel: z.string().min(1).optional(),
 
-  price: eventPriceSchema,
+    price: eventPriceSchema,
 
-  ticketProvider: ticketProviderSchema,
-  ticketUrl: z.url(),
+    ticketProvider: ticketProviderSchema,
+    ticketUrl: z.url(),
 
-  featured: z.boolean(),
-  status: eventStatusSchema,
+    featured: z.boolean(),
+    status: eventStatusSchema,
 
-  createdAt: z.iso.datetime(),
-  updatedAt: z.iso.datetime(),
-});
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+  })
+  .refine(
+    (event) =>
+      event.startAt !== undefined ||
+      event.scheduleLabel !== undefined,
+    {
+      message:
+        "An event must have either startAt or scheduleLabel.",
+      path: ["startAt"],
+    }
+  );
 
-export type ValidatedEvent = z.infer<typeof eventSchema>;
+export type ValidatedEvent = z.infer<
+  typeof eventSchema
+>;

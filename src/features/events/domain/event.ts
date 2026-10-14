@@ -41,8 +41,9 @@ export interface Event {
 
   location: EventLocation;
 
-  startAt: string;
+  startAt?: string;
   endAt?: string;
+  scheduleLabel?: string;
 
   price: EventPrice;
 

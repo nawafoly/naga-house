@@ -1,11 +1,13 @@
 ﻿import type { Event, EventQuery } from "../domain";
 import type { EventRepository } from "./event.repository";
 import { entertainmentEvents } from "./entertainment-events";
+import { familyEvents } from "./family-events";
 import { mockEvents } from "./mock-events";
 
 const events: Event[] = [
   ...mockEvents,
   ...entertainmentEvents,
+  ...familyEvents,
 ];
 
 export class MockEventRepository implements EventRepository {

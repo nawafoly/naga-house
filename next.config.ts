@@ -31,6 +31,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "carttelentertainment.com",
       },
+      {
+        protocol: "https",
+        hostname: "framerusercontent.com",
+      },
     ],
   },
 };

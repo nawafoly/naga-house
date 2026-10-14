@@ -1,7 +1,10 @@
 ﻿import Image from "next/image";
 import Link from "next/link";
 
-import { getEventCategoryLabel, type Event } from "../domain";
+import {
+  getEventCategoryLabel,
+  type Event,
+} from "../domain";
 
 interface EventCardProps {
   event: Event;
@@ -9,11 +12,14 @@ interface EventCardProps {
 }
 
 function formatEventDate(value: string) {
-  return new Intl.DateTimeFormat("ar-SA-u-ca-gregory", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(value));
+  return new Intl.DateTimeFormat(
+    "ar-SA-u-ca-gregory",
+    {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }
+  ).format(new Date(value));
 }
 
 export function EventCard({
@@ -24,6 +30,11 @@ export function EventCard({
     event.price.amountFrom !== undefined
       ? `يبدأ من ${event.price.amountFrom} ر.س`
       : "السعر يحدد لاحقًا";
+
+  const schedule =
+    event.startAt !== undefined
+      ? formatEventDate(event.startAt)
+      : event.scheduleLabel ?? "متاح للحجز";
 
   return (
     <article className="group overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.035] transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.055]">
@@ -53,7 +64,7 @@ export function EventCard({
 
         <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
           <p className="mb-2 text-sm font-medium text-white/75">
-            {formatEventDate(event.startAt)}
+            {schedule}
           </p>
 
           <h2 className="text-2xl font-bold leading-tight text-white sm:text-3xl">
@@ -98,9 +109,7 @@ export function EventCard({
           >
             <span>عرض التفاصيل</span>
 
-            <span className="text-xl">
-              ←
-            </span>
+            <span className="text-xl">←</span>
           </Link>
         </div>
       </div>

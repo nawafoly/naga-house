@@ -11,7 +11,9 @@ import { EventService } from "@/features/events/services";
 
 export const instant = false;
 
-const eventService = new EventService(new MockEventRepository());
+const eventService = new EventService(
+  new MockEventRepository()
+);
 
 interface EventPageProps {
   params: Promise<{
@@ -20,12 +22,15 @@ interface EventPageProps {
 }
 
 function formatEventDate(value: string) {
-  return new Intl.DateTimeFormat("ar-SA-u-ca-gregory", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(value));
+  return new Intl.DateTimeFormat(
+    "ar-SA-u-ca-gregory",
+    {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }
+  ).format(new Date(value));
 }
 
 function formatEventTime(value: string) {
@@ -40,19 +45,39 @@ export default async function EventPage({
 }: EventPageProps) {
   const { slug } = await params;
 
-  const event = await eventService.getEventBySlug(slug);
+  const event =
+    await eventService.getEventBySlug(slug);
 
   if (!event) {
     notFound();
   }
 
-  const hasPrice = event.price.amountFrom !== undefined;
+  const hasPrice =
+    event.price.amountFrom !== undefined;
 
   const price = hasPrice
     ? `${event.price.amountFrom} ر.س`
     : "يحدد لاحقًا";
 
-  const canBook = isSpecificTicketUrl(event.ticketUrl);
+  const canBook = isSpecificTicketUrl(
+    event.ticketUrl
+  );
+
+  const startAt = event.startAt;
+
+  const eventDate = startAt
+    ? formatEventDate(startAt)
+    : null;
+
+  const eventTime = startAt
+    ? formatEventTime(startAt)
+    : null;
+
+  const scheduleLabel =
+    event.scheduleLabel ?? "متاح للحجز";
+
+  const primarySchedule =
+    eventDate ?? scheduleLabel;
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -70,7 +95,10 @@ export default async function EventPage({
         <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-white/[0.03]">
           <div className="relative min-h-[500px] w-full sm:min-h-[580px] lg:min-h-[680px]">
             <Image
-              src={event.coverImageUrl ?? event.imageUrl}
+              src={
+                event.coverImageUrl ??
+                event.imageUrl
+              }
               alt={event.titleAr}
               fill
               priority
@@ -82,7 +110,9 @@ export default async function EventPage({
 
             <div className="absolute inset-x-0 top-0 flex flex-wrap items-center gap-3 p-5 sm:p-8">
               <span className="rounded-full border border-white/20 bg-black/55 px-5 py-2.5 text-sm font-medium text-white backdrop-blur-md">
-                {getEventCategoryLabel(event.category)}
+                {getEventCategoryLabel(
+                  event.category
+                )}
               </span>
 
               {event.featured && (
@@ -94,7 +124,8 @@ export default async function EventPage({
 
             <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-14">
               <p className="mb-4 text-lg font-medium text-white/80">
-                {event.location.city} · {event.location.venue}
+                {event.location.city} ·{" "}
+                {event.location.venue}
               </p>
 
               <h1 className="max-w-5xl text-5xl font-bold sm:text-6xl lg:text-8xl">
@@ -102,10 +133,20 @@ export default async function EventPage({
               </h1>
 
               <div className="mt-7 flex flex-wrap gap-8 text-lg font-medium text-white/80">
-                <span>{formatEventDate(event.startAt)}</span>
-                <span>{formatEventTime(event.startAt)}</span>
                 <span>
-                  {hasPrice ? `يبدأ من ${price}` : price}
+                  {primarySchedule}
+                </span>
+
+                {eventTime && (
+                  <span>
+                    {eventTime}
+                  </span>
+                )}
+
+                <span>
+                  {hasPrice
+                    ? `يبدأ من ${price}`
+                    : price}
                 </span>
               </div>
             </div>
@@ -132,16 +173,18 @@ export default async function EventPage({
             <section className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-6">
                 <p className="text-base font-semibold text-white/70">
-                  التاريخ
+                  الموعد
                 </p>
 
                 <p className="mt-3 text-xl font-semibold">
-                  {formatEventDate(event.startAt)}
+                  {primarySchedule}
                 </p>
 
-                <p className="mt-2 text-white/70">
-                  {formatEventTime(event.startAt)}
-                </p>
+                {eventTime && (
+                  <p className="mt-2 text-white/70">
+                    {eventTime}
+                  </p>
+                )}
               </div>
 
               <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-6">
@@ -179,8 +222,14 @@ export default async function EventPage({
                   </p>
 
                   <p className="mt-2">
-                    {formatEventDate(event.startAt)}
+                    {primarySchedule}
                   </p>
+
+                  {eventTime && (
+                    <p className="mt-1 text-sm text-white/55">
+                      {eventTime}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -202,7 +251,9 @@ export default async function EventPage({
                   className="mt-8 flex h-16 w-full items-center justify-center rounded-full bg-white px-6 text-lg font-semibold text-black transition hover:scale-[1.01] hover:bg-white/90 active:scale-[0.99]"
                 >
                   احجز الآن
-                  <span className="mr-3">↗</span>
+                  <span className="mr-3">
+                    ↗
+                  </span>
                 </a>
               ) : (
                 <button
@@ -211,13 +262,16 @@ export default async function EventPage({
                   className="mt-8 flex h-16 w-full cursor-not-allowed items-center justify-center rounded-full bg-white px-6 text-lg font-semibold text-black/45"
                 >
                   احجز الآن
-                  <span className="mr-3">↗</span>
+                  <span className="mr-3">
+                    ↗
+                  </span>
                 </button>
               )}
 
               {!canBook && (
                 <p className="mt-3 text-center text-sm leading-6 text-white/50">
-                  رابط التذكرة الرسمي لهذه الفعالية لم يُضف بعد.
+                  رابط التذكرة الرسمي لهذه
+                  الفعالية لم يُضف بعد.
                 </p>
               )}
             </div>
