@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -19,6 +20,58 @@ interface EventPageProps {
   params: Promise<{
     slug: string;
   }>;
+}
+
+export async function generateMetadata({
+  params,
+}: EventPageProps): Promise<Metadata> {
+  const { slug } = await params;
+
+  const event =
+    await eventService.getEventBySlug(slug);
+
+  if (!event) {
+    return {
+      title: "الفعالية غير موجودة",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  const description =
+    event.descriptionAr ??
+    `اكتشف تفاصيل ${event.titleAr} في جدة واحجز عبر المنصة الرسمية.`;
+
+  const image =
+    event.coverImageUrl ?? event.imageUrl;
+
+  return {
+    title: event.titleAr,
+    description,
+
+    openGraph: {
+      type: "article",
+      locale: "ar_SA",
+      siteName: "NAGA HOUSE",
+      title: event.titleAr,
+      description,
+      images: [
+        {
+          url: image,
+          alt: event.titleAr,
+        },
+      ],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: event.titleAr,
+      description,
+      images: [image],
+    },
+  };
 }
 
 function formatEventDate(value: string) {
