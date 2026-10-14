@@ -170,6 +170,47 @@ export const mockEvents: Event[] = [
   },
 
   {
+    id: "evt_wagef_nemr_2026",
+    slug: "wagef-nemr-jeddah-2026",
+
+    titleAr: "وقف! عرض نمر الكوميدي",
+    titleEn: "Wagef! Nemr Live Comedy Show in Jeddah",
+
+    descriptionAr:
+      "أمسية ستاند أب كوميدي مباشرة مع نمر في جدة، تجمع سرعة البديهة والحكايات والمواقف الكوميدية في عرض حي بجامعة دار الحكمة.",
+
+    imageUrl:
+      "https://images.unsplash.com/photo-1527224857830-43a7acc85260?auto=format&fit=crop&w=1200&q=80",
+
+    coverImageUrl:
+      "https://images.unsplash.com/photo-1527224857830-43a7acc85260?auto=format&fit=crop&w=1800&q=80",
+
+    category: "theater",
+
+    location: {
+      city: "Jeddah",
+      venue: "Dar Al-Hekma University",
+    },
+
+    startAt: "2026-11-07T18:00:00.000Z",
+
+    price: {
+      amountFrom: 150,
+      currency: "SAR",
+    },
+
+    ticketProvider: "platinumlist",
+    ticketUrl:
+      "https://jeddah.platinumlist.net/event-tickets/107450/wagef-nemr-live-comedy-show-in-jeddah",
+
+    featured: true,
+    status: "published",
+
+    createdAt: "2026-10-14T00:00:00.000Z",
+    updatedAt: "2026-10-14T00:00:00.000Z",
+  },
+
+  {
     id: "evt_jeddah_eprix_day_1_2026",
     slug: "jeddah-eprix-day-1-2026",
 
