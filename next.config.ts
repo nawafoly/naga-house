@@ -23,6 +23,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "www.datocms-assets.com",
       },
+      {
+        protocol: "https",
+        hostname: "images.cmscloud.ai",
+      },
     ],
   },
 };

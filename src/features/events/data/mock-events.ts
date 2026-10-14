@@ -168,4 +168,88 @@ export const mockEvents: Event[] = [
     createdAt: "2026-10-14T00:00:00.000Z",
     updatedAt: "2026-10-14T00:00:00.000Z",
   },
+
+  {
+    id: "evt_jeddah_eprix_day_1_2026",
+    slug: "jeddah-eprix-day-1-2026",
+
+    titleAr: "جدة إي بري – اليوم الأول",
+    titleEn: "Jeddah E-Prix - Day 1",
+
+    descriptionAr:
+      "اليوم الأول من جدة إي بري على حلبة كورنيش جدة ضمن بطولة فورمولا إي، مع السباق والفعاليات المصاحبة.",
+
+    imageUrl:
+      "https://images.cmscloud.ai/d56e1636-11c2-4a8b-8195-2256d8cea670/10dd8be0-9ff1-4624-938a-185e5040686e/dhVOKgpuMJSnKLyZrM0a5e/3b475690-d524-4b6c-80b7-1da637a3af20/Webook_announcement2_1280_1280_copy.jpg",
+
+    coverImageUrl:
+      "https://images.cmscloud.ai/d56e1636-11c2-4a8b-8195-2256d8cea670/10dd8be0-9ff1-4624-938a-185e5040686e/dhVOKgpuMJSnKLyZrM0a5e/3b475690-d524-4b6c-80b7-1da637a3af20/Webook_announcement2_1280_1280_copy.jpg",
+
+    category: "sports",
+
+    location: {
+      city: "Jeddah",
+      venue: "Jeddah Corniche Circuit",
+    },
+
+    startAt: "2026-12-18T11:00:00.000Z",
+    endAt: "2026-12-18T22:00:00.000Z",
+
+    price: {
+      amountFrom: 96,
+      currency: "SAR",
+    },
+
+    ticketProvider: "webook",
+    ticketUrl:
+      "https://webook.com/en/sa/jed/sports-event/events/e-prix-2027-day-1",
+
+    featured: true,
+    status: "published",
+
+    createdAt: "2026-10-14T00:00:00.000Z",
+    updatedAt: "2026-10-14T00:00:00.000Z",
+  },
+
+  {
+    id: "evt_jeddah_eprix_day_2_2026",
+    slug: "jeddah-eprix-day-2-2026",
+
+    titleAr: "جدة إي بري – اليوم الثاني",
+    titleEn: "Jeddah E-Prix - Day 2",
+
+    descriptionAr:
+      "اليوم الثاني من جدة إي بري على حلبة كورنيش جدة، مع سباق مستقل وتجارب وفعاليات مصاحبة.",
+
+    imageUrl:
+      "https://images.cmscloud.ai/d56e1636-11c2-4a8b-8195-2256d8cea670/10dd8be0-9ff1-4624-938a-185e5040686e/Gb2eIG1MpfeBoVqDjxH71Y/e06017c8-e7e7-483e-aaa5-857480a4edc1/Webook_announcement2_1280_1280_copy_2.jpg",
+
+    coverImageUrl:
+      "https://images.cmscloud.ai/d56e1636-11c2-4a8b-8195-2256d8cea670/10dd8be0-9ff1-4624-938a-185e5040686e/Gb2eIG1MpfeBoVqDjxH71Y/e06017c8-e7e7-483e-aaa5-857480a4edc1/Webook_announcement2_1280_1280_copy_2.jpg",
+
+    category: "sports",
+
+    location: {
+      city: "Jeddah",
+      venue: "Jeddah Corniche Circuit",
+    },
+
+    startAt: "2026-12-19T11:00:00.000Z",
+    endAt: "2026-12-19T22:00:00.000Z",
+
+    price: {
+      amountFrom: 96,
+      currency: "SAR",
+    },
+
+    ticketProvider: "webook",
+    ticketUrl:
+      "https://webook.com/en/sa/jed/sports-event/events/e-prix-2027-day-2",
+
+    featured: false,
+    status: "published",
+
+    createdAt: "2026-10-14T00:00:00.000Z",
+    updatedAt: "2026-10-14T00:00:00.000Z",
+  },
 ];
