@@ -1,41 +1,67 @@
 ﻿import type { Event, EventQuery } from "../domain";
 import type { EventRepository } from "./event.repository";
+import { entertainmentEvents } from "./entertainment-events";
 import { mockEvents } from "./mock-events";
+
+const events: Event[] = [
+  ...mockEvents,
+  ...entertainmentEvents,
+];
 
 export class MockEventRepository implements EventRepository {
   async getAll(): Promise<Event[]> {
-    return mockEvents;
+    return events;
   }
 
   async getPublished(): Promise<Event[]> {
-    return mockEvents.filter((event) => event.status === "published");
+    return events.filter(
+      (event) => event.status === "published"
+    );
   }
 
   async getFeatured(): Promise<Event[]> {
-    return mockEvents.filter(
-      (event) => event.status === "published" && event.featured
+    return events.filter(
+      (event) =>
+        event.status === "published" &&
+        event.featured
     );
   }
 
   async getBySlug(slug: string): Promise<Event | null> {
-    return mockEvents.find((event) => event.slug === slug) ?? null;
+    return (
+      events.find((event) => event.slug === slug) ??
+      null
+    );
   }
 
-  async searchPublished(query: EventQuery): Promise<Event[]> {
-    const search = query.search?.trim().toLowerCase();
-    const category = query.category?.trim().toLowerCase();
-    const city = query.city?.trim().toLowerCase();
+  async searchPublished(
+    query: EventQuery
+  ): Promise<Event[]> {
+    const search =
+      query.search?.trim().toLowerCase();
 
-    return mockEvents.filter((event) => {
+    const category =
+      query.category?.trim().toLowerCase();
+
+    const city =
+      query.city?.trim().toLowerCase();
+
+    return events.filter((event) => {
       if (event.status !== "published") {
         return false;
       }
 
-      if (category && event.category.toLowerCase() !== category) {
+      if (
+        category &&
+        event.category.toLowerCase() !== category
+      ) {
         return false;
       }
 
-      if (city && event.location.city.toLowerCase() !== city) {
+      if (
+        city &&
+        event.location.city.toLowerCase() !== city
+      ) {
         return false;
       }
 

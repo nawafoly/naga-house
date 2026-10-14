@@ -27,6 +27,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.cmscloud.ai",
       },
+      {
+        protocol: "https",
+        hostname: "carttelentertainment.com",
+      },
     ],
   },
 };
