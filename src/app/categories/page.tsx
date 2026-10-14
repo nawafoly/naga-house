@@ -1,6 +1,10 @@
 import Link from "next/link";
 
+import { MockEventRepository } from "@/features/events/data";
 import { eventCategoryLabels } from "@/features/events/domain";
+import { EventService } from "@/features/events/services";
+
+const eventService = new EventService(new MockEventRepository());
 
 const categoryDescriptions: Record<string, string> = {
   music: "حفلات، موسيقى، دي جي وتجارب موسيقية مباشرة.",
@@ -20,7 +24,32 @@ const categoryOrder = [
   "entertainment",
 ];
 
-export default function CategoriesPage() {
+export default async function CategoriesPage() {
+  const events = await eventService.getPublishedEvents();
+
+  const categoryCounts = events.reduce<Record<string, number>>(
+    (counts, event) => {
+      counts[event.category] =
+        (counts[event.category] ?? 0) + 1;
+
+      return counts;
+    },
+    {}
+  );
+
+  const knownCategories = categoryOrder.filter(
+    (category) => (categoryCounts[category] ?? 0) > 0
+  );
+
+  const extraCategories = Object.keys(categoryCounts)
+    .filter((category) => !categoryOrder.includes(category))
+    .sort();
+
+  const availableCategories = [
+    ...knownCategories,
+    ...extraCategories,
+  ];
+
   return (
     <main className="min-h-screen bg-black text-white">
       <section className="mx-auto w-full max-w-[1600px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
@@ -34,51 +63,76 @@ export default function CategoriesPage() {
           </h1>
 
           <p className="mt-7 max-w-3xl text-lg leading-9 text-white/70 sm:text-xl lg:text-2xl lg:leading-10">
-            اختر نوع التجربة اللي تبيها، واستعرض الفعاليات المتوفرة في جدة
-            مباشرة.
+            اختر نوع التجربة اللي تبيها، واستعرض الفعاليات المتوفرة
+            حاليًا في جدة.
           </p>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {categoryOrder.map((category, index) => (
-            <Link
-              key={category}
-              href={`/events?category=${category}`}
-              className="group relative min-h-[300px] overflow-hidden rounded-[34px] border border-white/10 bg-white/[0.035] p-7 transition duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-white/[0.065] sm:p-8"
-            >
-              <div
-                aria-hidden="true"
-                className="absolute -left-16 -top-16 h-56 w-56 rounded-full bg-white/[0.045] blur-3xl transition duration-500 group-hover:bg-white/[0.08]"
-              />
+        {availableCategories.length > 0 ? (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {availableCategories.map((category, index) => {
+              const count = categoryCounts[category] ?? 0;
 
-              <div className="relative flex h-full min-h-[240px] flex-col justify-between">
-                <div>
-                  <p className="text-sm font-medium tracking-[0.3em] text-white/35">
-                    {String(index + 1).padStart(2, "0")}
-                  </p>
+              return (
+                <Link
+                  key={category}
+                  href={`/events?category=${category}`}
+                  className="group relative min-h-[300px] overflow-hidden rounded-[34px] border border-white/10 bg-white/[0.035] p-7 transition duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-white/[0.065] sm:p-8"
+                >
+                  <div
+                    aria-hidden="true"
+                    className="absolute -left-16 -top-16 h-56 w-56 rounded-full bg-white/[0.045] blur-3xl transition duration-500 group-hover:bg-white/[0.08]"
+                  />
 
-                  <h2 className="mt-7 text-4xl font-bold tracking-tight sm:text-5xl">
-                    {eventCategoryLabels[category]}
-                  </h2>
+                  <div className="relative flex h-full min-h-[240px] flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between gap-4">
+                        <p className="text-sm font-medium tracking-[0.3em] text-white/35">
+                          {String(index + 1).padStart(2, "0")}
+                        </p>
 
-                  <p className="mt-5 max-w-sm text-base leading-8 text-white/55">
-                    {categoryDescriptions[category]}
-                  </p>
-                </div>
+                        <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5 text-xs font-medium text-white/55">
+                          {count}{" "}
+                          {count === 1 ? "فعالية" : "فعاليات"}
+                        </span>
+                      </div>
 
-                <div className="mt-10 flex items-center justify-between border-t border-white/10 pt-6">
-                  <span className="text-base font-semibold text-white">
-                    استعرض الفعاليات
-                  </span>
+                      <h2 className="mt-7 text-4xl font-bold tracking-tight sm:text-5xl">
+                        {eventCategoryLabels[category] ??
+                          category}
+                      </h2>
 
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-xl text-black transition duration-300 group-hover:-translate-x-1">
-                    ←
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+                      <p className="mt-5 max-w-sm text-base leading-8 text-white/55">
+                        {categoryDescriptions[category] ??
+                          "استعرض الفعاليات المتوفرة ضمن هذا التصنيف."}
+                      </p>
+                    </div>
+
+                    <div className="mt-10 flex items-center justify-between border-t border-white/10 pt-6">
+                      <span className="text-base font-semibold text-white">
+                        استعرض الفعاليات
+                      </span>
+
+                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-xl text-black transition duration-300 group-hover:-translate-x-1">
+                        ←
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="rounded-[34px] border border-white/10 bg-white/[0.035] px-6 py-20 text-center">
+            <h2 className="text-3xl font-bold">
+              لا توجد تصنيفات متاحة حاليًا
+            </h2>
+
+            <p className="mt-4 text-base text-white/55">
+              ستظهر التصنيفات تلقائيًا عند إضافة فعاليات جديدة.
+            </p>
+          </div>
+        )}
 
         <div className="mt-16 flex justify-center">
           <Link
