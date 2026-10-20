@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 
 import { SiteHeader } from "@/components/layout";
 
@@ -55,7 +55,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body className="bg-black text-white">
+      <body className="bg-background text-foreground">
         <SiteHeader />
         {children}
       </body>

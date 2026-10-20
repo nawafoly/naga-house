@@ -55,55 +55,66 @@ export default async function EventsPage({
   }
 
   return (
-    <main className="min-h-screen bg-black text-white">
-      <section className="mx-auto w-full max-w-[1600px] px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
-        <div className="mb-14 lg:mb-16">
-          <p className="mb-5 text-base font-medium uppercase tracking-[0.45em] text-white/55 sm:text-lg">
+    <main className="min-h-screen bg-brand-cream text-brand-ink">
+      <section className="relative isolate overflow-visible bg-brand-green text-brand-cream">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_85%,rgba(237,139,82,0.2),transparent_35%),radial-gradient(circle_at_85%_10%,rgba(34,93,126,0.32),transparent_34%)]"
+        />
+        <div className="relative mx-auto w-full max-w-[1600px] px-4 pb-16 pt-14 sm:px-6 lg:px-8 lg:pb-20 lg:pt-20">
+          <p className="naga-latin text-sm font-bold tracking-[0.36em] text-brand-orange sm:text-base">
             JEDDAH EVENTS
           </p>
-
-          <h1 className="text-6xl font-bold tracking-tight sm:text-7xl lg:text-8xl">
-            جميع الفعاليات
-          </h1>
-
-          <p className="mt-6 max-w-4xl text-lg leading-9 text-white/70 sm:text-xl lg:text-2xl lg:leading-10">
-            اكتب اسم المسرحية أو الحفلة أو التجربة، وبتظهر لك النتائج
-            مباشرة أثناء الكتابة.
-          </p>
+          <div className="mt-5 lg:flex lg:items-end lg:justify-between lg:gap-12">
+            <div>
+              <h1 className="text-5xl font-extrabold leading-tight sm:text-7xl lg:text-8xl">
+                جميع <span className="text-brand-orange">الفعاليات</span>
+              </h1>
+              <p className="mt-5 max-w-3xl text-lg leading-9 text-brand-cream/85 sm:text-xl">
+                اكتشف تجارب جدة في مكان واحد، واختر الفعالية اللي تناسبك.
+              </p>
+            </div>
+            <Link
+              href="/categories"
+              className="mt-7 inline-flex w-fit items-center gap-3 rounded-full border border-brand-cream/30 bg-brand-cream/10 px-6 py-3.5 font-bold text-brand-cream transition hover:bg-brand-cream/20 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-orange lg:mt-0"
+            >
+              تصفح التصنيفات <span aria-hidden="true">←</span>
+            </Link>
+          </div>
+          <div className="relative z-40 mt-10 max-w-4xl">
+            <EventLiveSearch />
+          </div>
         </div>
+      </section>
 
-        <div className="relative z-40 mb-8">
-          <EventLiveSearch />
-        </div>
-
-        <div className="mb-12 rounded-[32px] border border-white/10 bg-white/[0.035] p-5 sm:p-6">
-          <p className="mb-4 text-sm font-medium text-white/55">
+      <section className="mx-auto w-full max-w-[1600px] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+        <div className="mb-11 rounded-[28px] border border-brand-green/15 bg-[#fffaf0] p-5 shadow-[0_10px_30px_rgba(34,34,34,0.06)] sm:p-6">
+          <p className="mb-4 text-sm font-bold text-brand-green">
             تصفية حسب التصنيف
           </p>
-
           <div className="flex flex-wrap gap-3">
             <Link
               href={getCategoryHref("")}
-              className={`rounded-full border px-6 py-3 text-base font-medium transition ${
+              aria-current={!category ? "page" : undefined}
+              className={`rounded-full border px-5 py-2.5 text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-copper sm:text-base ${
                 !category
-                  ? "border-white bg-white text-black"
-                  : "border-white/10 bg-white/5 text-white/70 hover:border-white/25 hover:bg-white/10 hover:text-white"
+                  ? "border-brand-green bg-brand-green text-brand-cream"
+                  : "border-brand-green/20 bg-brand-cream text-brand-green hover:border-brand-copper hover:bg-brand-orange/15"
               }`}
             >
               الكل
             </Link>
-
             {categories.map((item) => {
               const isActive = category === item;
-
               return (
                 <Link
                   key={item}
                   href={getCategoryHref(item)}
-                  className={`rounded-full border px-6 py-3 text-base font-medium transition ${
+                  aria-current={isActive ? "page" : undefined}
+                  className={`rounded-full border px-5 py-2.5 text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-copper sm:text-base ${
                     isActive
-                      ? "border-white bg-white text-black"
-                      : "border-white/10 bg-white/5 text-white/70 hover:border-white/25 hover:bg-white/10 hover:text-white"
+                      ? "border-brand-green bg-brand-green text-brand-cream"
+                      : "border-brand-green/20 bg-brand-cream text-brand-green hover:border-brand-copper hover:bg-brand-orange/15"
                   }`}
                 >
                   {getEventCategoryLabel(item)}
@@ -115,16 +126,12 @@ export default async function EventsPage({
 
         {(search || category) && (
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-            <p className="text-base text-white/60">
-              عدد النتائج:{" "}
-              <span className="font-semibold text-white">
-                {events.length}
-              </span>
+            <p className="font-medium text-brand-ink/75">
+              عدد النتائج: <span className="font-extrabold text-brand-green">{events.length}</span>
             </p>
-
             <Link
               href="/events"
-              className="rounded-full border border-white/10 px-5 py-2.5 text-base text-white/70 transition hover:border-white/25 hover:bg-white/5 hover:text-white"
+              className="rounded-full border border-brand-copper/30 px-5 py-2.5 font-bold text-brand-copper transition hover:bg-brand-orange/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-copper"
             >
               مسح الفلاتر
             </Link>
@@ -142,18 +149,16 @@ export default async function EventsPage({
             ))}
           </div>
         ) : (
-          <div className="rounded-[36px] border border-white/10 bg-white/[0.035] px-6 py-24 text-center">
-            <h2 className="text-3xl font-semibold sm:text-4xl">
+          <div className="rounded-[30px] border border-brand-green/15 bg-[#fffaf0] px-6 py-20 text-center">
+            <h2 className="text-3xl font-extrabold text-brand-green sm:text-4xl">
               ما لقينا فعاليات مطابقة
             </h2>
-
-            <p className="mt-5 text-lg text-white/65">
+            <p className="mt-5 text-lg text-brand-ink/70">
               جرّب كلمة بحث مختلفة أو اختر تصنيفًا آخر.
             </p>
-
             <Link
               href="/events"
-              className="mt-8 inline-flex rounded-full bg-white px-7 py-3.5 text-base font-semibold text-black"
+              className="mt-8 inline-flex rounded-full bg-brand-orange px-7 py-3.5 font-bold text-brand-ink transition hover:bg-brand-green hover:text-brand-cream"
             >
               عرض كل الفعاليات
             </Link>

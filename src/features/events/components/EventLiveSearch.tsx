@@ -57,17 +57,11 @@ export function EventLiveSearch() {
       try {
         const response = await fetch(
           `/api/events/search?q=${encodeURIComponent(normalizedQuery)}`,
-          {
-            signal: controller.signal,
-          }
+          { signal: controller.signal }
         );
 
         if (!response.ok) {
-          setResult({
-            query: normalizedQuery,
-            events: [],
-          });
-
+          setResult({ query: normalizedQuery, events: [] });
           return;
         }
 
@@ -85,10 +79,7 @@ export function EventLiveSearch() {
           return;
         }
 
-        setResult({
-          query: normalizedQuery,
-          events: [],
-        });
+        setResult({ query: normalizedQuery, events: [] });
       }
     }, 180);
 
@@ -106,8 +97,8 @@ export function EventLiveSearch() {
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          strokeWidth="1.8"
-          className="pointer-events-none absolute right-6 top-1/2 h-6 w-6 -translate-y-1/2 text-white/35"
+          strokeWidth="2"
+          className="pointer-events-none absolute right-5 top-1/2 h-6 w-6 -translate-y-1/2 text-brand-copper sm:right-6"
         >
           <circle cx="11" cy="11" r="7" />
           <path d="m20 20-3.5-3.5" />
@@ -115,6 +106,7 @@ export function EventLiveSearch() {
 
         <input
           type="search"
+          aria-label="ابحث في فعاليات جدة"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           onFocus={() => setIsFocused(true)}
@@ -125,26 +117,26 @@ export function EventLiveSearch() {
           }}
           placeholder="ابحث عن مسرحية، حفلة، تجربة..."
           autoComplete="off"
-          className="h-20 w-full rounded-[26px] border border-white/15 bg-white/[0.07] pr-16 pl-6 text-lg text-white outline-none backdrop-blur-xl transition placeholder:text-white/30 hover:border-white/25 focus:border-white/40 focus:bg-white/[0.09] sm:text-xl"
+          className="h-[72px] w-full rounded-[24px] border border-brand-cream/90 bg-brand-cream px-5 pr-16 text-base font-semibold text-brand-ink shadow-[0_12px_32px_rgba(0,0,0,0.14)] outline-none transition placeholder:font-medium placeholder:text-brand-ink/60 hover:bg-white focus:border-brand-orange focus:bg-white focus:ring-4 focus:ring-brand-orange/35 sm:h-20 sm:text-lg"
         />
       </div>
 
       {showPanel && (
-        <div className="absolute inset-x-0 top-[calc(100%+12px)] z-50 overflow-hidden rounded-[28px] border border-white/10 bg-[#0b0b0b]/95 shadow-2xl backdrop-blur-2xl">
+        <div className="absolute inset-x-0 top-[calc(100%+10px)] z-50 overflow-hidden rounded-[24px] border border-brand-cream/20 bg-brand-ink/98 text-brand-cream shadow-2xl backdrop-blur-2xl sm:rounded-[28px]">
           {isLoading ? (
-            <div className="px-6 py-8 text-center text-white/45">
+            <div className="px-6 py-8 text-center text-brand-cream/75">
               جاري البحث...
             </div>
           ) : visibleEvents.length > 0 ? (
             <>
-              <div className="divide-y divide-white/[0.07]">
+              <div className="divide-y divide-brand-cream/10">
                 {visibleEvents.map((event) => (
                   <Link
                     key={event.id}
                     href={`/events/${event.slug}`}
-                    className="group flex items-center gap-4 p-4 transition hover:bg-white/[0.06] sm:p-5"
+                    className="group flex items-center gap-3 p-3 transition hover:bg-brand-green/25 focus-visible:bg-brand-green/25 focus-visible:outline-2 focus-visible:outline-brand-orange sm:gap-4 sm:p-5"
                   >
-                    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-white/5 sm:h-24 sm:w-24">
+                    <div className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-2xl bg-brand-cream/10 sm:h-24 sm:w-24">
                       <Image
                         src={event.imageUrl}
                         alt={event.titleAr}
@@ -156,27 +148,27 @@ export function EventLiveSearch() {
 
                     <div className="min-w-0 flex-1">
                       <div className="mb-2 flex flex-wrap items-center gap-2">
-                        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/50">
+                        <span className="rounded-full border border-brand-orange/25 bg-brand-orange/15 px-3 py-1 text-xs text-brand-cream/90">
                           {getEventCategoryLabel(event.category)}
                         </span>
 
-                        <span className="text-xs text-white/35">
+                        <span className="max-w-full truncate text-xs text-brand-cream/65">
                           {event.venue}
                         </span>
                       </div>
 
-                      <h3 className="truncate text-lg font-semibold text-white sm:text-xl">
+                      <h3 className="truncate text-base font-bold text-brand-cream sm:text-xl">
                         {event.titleAr}
                       </h3>
 
-                      <p className="mt-2 text-sm text-white/40">
+                      <p className="mt-2 text-xs text-brand-cream/70 sm:text-sm">
                         {event.priceFrom !== undefined
                           ? `يبدأ من ${event.priceFrom} ر.س`
                           : "السعر يحدد لاحقًا"}
                       </p>
                     </div>
 
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-lg text-white/60 transition group-hover:bg-white group-hover:text-black">
+                    <div aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-brand-cream/20 bg-brand-cream/10 text-brand-cream/80 transition group-hover:bg-brand-orange group-hover:text-brand-ink">
                       ←
                     </div>
                   </Link>
@@ -185,18 +177,18 @@ export function EventLiveSearch() {
 
               <Link
                 href={`/events?search=${encodeURIComponent(normalizedQuery)}`}
-                className="flex h-14 items-center justify-center border-t border-white/10 text-sm font-medium text-white/55 transition hover:bg-white/[0.05] hover:text-white"
+                className="flex h-14 items-center justify-center border-t border-brand-cream/15 text-sm font-bold text-brand-orange transition hover:bg-brand-cream/10 focus-visible:outline-2 focus-visible:outline-brand-orange"
               >
                 عرض كل النتائج
               </Link>
             </>
           ) : (
             <div className="px-6 py-8 text-center">
-              <p className="text-base font-medium text-white/70">
+              <p className="text-base font-semibold text-brand-cream">
                 ما لقينا نتيجة مطابقة
               </p>
 
-              <p className="mt-2 text-sm text-white/35">
+              <p className="mt-2 text-sm text-brand-cream/65">
                 جرّب اسم فعالية أو مكان مختلف.
               </p>
             </div>
@@ -205,7 +197,7 @@ export function EventLiveSearch() {
       )}
 
       {!canSearch && query.length > 0 && (
-        <p className="mt-3 px-2 text-sm text-white/30">
+        <p className="mt-3 px-2 text-sm text-brand-cream/80">
           اكتب حرفين على الأقل لبدء البحث.
         </p>
       )}

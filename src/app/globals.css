@@ -1,26 +1,79 @@
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* NAGA HOUSE approved brand palette */
+  --naga-green: #425c43;
+  --naga-blue: #225d7e;
+  --naga-orange: #ed8b52;
+  --naga-copper: #a6551e;
+  --naga-brick: #b95146;
+  --naga-ink: #222222;
+  --naga-cream: #f8eedb;
+
+  --background: var(--naga-ink);
+  --foreground: var(--naga-cream);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-brand-green: var(--naga-green);
+  --color-brand-blue: var(--naga-blue);
+  --color-brand-orange: var(--naga-orange);
+  --color-brand-copper: var(--naga-copper);
+  --color-brand-brick: var(--naga-brick);
+  --color-brand-ink: var(--naga-ink);
+  --color-brand-cream: var(--naga-cream);
+  --font-sans: "Cairo", Tahoma, Arial, sans-serif;
+  --font-display: "Montserrat", Arial, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--naga-ink);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Cairo", Tahoma, Arial, sans-serif;
+}
+
+.naga-latin {
+  font-family: "Montserrat", Arial, sans-serif;
+}
+
+.naga-hero {
+  background:
+    radial-gradient(circle at 13% 73%, rgba(237, 139, 82, 0.22), transparent 34%),
+    radial-gradient(circle at 83% 20%, rgba(34, 93, 126, 0.2), transparent 32%),
+    linear-gradient(115deg, #25372a 0%, var(--naga-green) 53%, #22342a 100%);
+}
+
+.naga-hero-lines {
+  background-image:
+    linear-gradient(rgba(248, 238, 219, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(248, 238, 219, 0.04) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to left, black, transparent 80%);
+  pointer-events: none;
+}
+
+/* A softer visual hand-off from the green hero to the events section. */
+.naga-home-featured {
+  background: linear-gradient(
+    180deg,
+    #2d4233 0,
+    #222222 210px,
+    #222222 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .naga-hero *,
+  .naga-home-featured * {
+    scroll-behavior: auto;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
