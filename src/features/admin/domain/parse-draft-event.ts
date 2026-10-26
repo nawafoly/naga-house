@@ -1,4 +1,4 @@
-/** Strict, dependency-free validation for the admin's first D1-only event draft. */
+/** Parse and validate a D1-only draft. Never create a published event here. */
 export interface DraftEventInput {
   slug: string;
   titleAr: string;
@@ -14,82 +14,101 @@ export interface DraftEventInput {
   ticketUrl: string;
 }
 
+export type DraftField =
+  | "slug" | "titleAr" | "titleEn" | "descriptionAr" | "imageUrl"
+  | "category" | "venue" | "startAt" | "scheduleLabel" | "amountFrom"
+  | "ticketProvider" | "ticketUrl";
+export type DraftFieldErrors = Partial<Record<DraftField, string>>;
+export type DraftEventValidation =
+  | { value: DraftEventInput; errors: DraftFieldErrors }
+  | { value: null; errors: DraftFieldErrors };
+
 const CATEGORIES = new Set(["music", "theater", "sports", "family", "dining", "entertainment"]);
 const PROVIDERS = new Set(["webook", "ticketmx", "platinumlist", "nofomo"]);
 
-function text(form: FormData, name: string, limit: number): string | null {
-  const value = form.get(name);
-  if (typeof value !== "string" || value.length > limit) return null;
-  return value.trim();
+/** Distinguish missing/empty from malformed or oversized form values. */
+function read(form: FormData, key: DraftField, limit: number): string | null {
+  const value = form.get(key);
+  if (value === null) return "";
+  return typeof value === "string" && value.length <= limit ? value.trim() : null;
 }
 
 function safeImageUrl(raw: string): boolean {
   if (!raw || raw.length > 2048) return false;
   try {
     const url = new URL(raw);
-    // First milestone: external Unsplash URLs only. R2 media upload comes later.
     return url.protocol === "https:" && url.hostname === "images.unsplash.com" &&
       !url.username && !url.password && url.port === "";
-  } catch {
-    return false;
-  }
+  } catch { return false; }
 }
 
 function localSaudiDate(raw: string): string | null {
   if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(raw)) return null;
   const parsed = new Date(`${raw}:00+03:00`);
   if (Number.isNaN(parsed.getTime())) return null;
-  // Reject auto-normalized invalid dates such as February 30.
   const verify = new Date(parsed.getTime() + 3 * 60 * 60 * 1000);
   if (verify.toISOString().slice(0, 16) !== raw) return null;
   return parsed.toISOString();
 }
 
-/** Returns null on invalid input; caller must additionally use canonical ticket-domain allowlist. */
-export function parseDraftEventForm(form: FormData): DraftEventInput | null {
-  const slug = text(form, "slug", 120);
-  const titleAr = text(form, "titleAr", 160);
-  const titleEn = text(form, "titleEn", 160);
-  const descriptionAr = text(form, "descriptionAr", 5000);
-  const imageUrl = text(form, "imageUrl", 2048);
-  const category = text(form, "category", 32);
-  const venue = text(form, "venue", 160);
-  const timeInput = text(form, "startAt", 32);
-  const scheduleLabel = text(form, "scheduleLabel", 160);
-  const amountInput = text(form, "amountFrom", 16);
-  const provider = text(form, "ticketProvider", 32);
-  const ticketUrl = text(form, "ticketUrl", 2048);
+/** Field-level messages contain no submitted values, secrets, SQL or user data. */
+export function validateDraftEventForm(form: FormData): DraftEventValidation {
+  const errors: DraftFieldErrors = {};
+  const slug = read(form, "slug", 120);
+  const titleAr = read(form, "titleAr", 160);
+  const titleEn = read(form, "titleEn", 160);
+  const descriptionAr = read(form, "descriptionAr", 5000);
+  const imageUrl = read(form, "imageUrl", 2048);
+  const category = read(form, "category", 32);
+  const venue = read(form, "venue", 160);
+  const timeInput = read(form, "startAt", 32);
+  const scheduleLabel = read(form, "scheduleLabel", 160);
+  const amountInput = read(form, "amountFrom", 16);
+  const provider = read(form, "ticketProvider", 32);
+  const ticketUrl = read(form, "ticketUrl", 2048);
 
-  if (!slug || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || slug.length < 3 ||
-      !titleAr || titleAr.length < 2 || titleEn === null || descriptionAr === null ||
-      !imageUrl || !safeImageUrl(imageUrl) || !category || !CATEGORIES.has(category) ||
-      !venue || !timeInput && !scheduleLabel || timeInput === null || scheduleLabel === null ||
-      amountInput === null || !provider || !PROVIDERS.has(provider) || !ticketUrl) {
-    return null;
+  if (!titleAr || titleAr.length < 2) errors.titleAr = "أدخل اسم الفعالية بالعربية (حرفين على الأقل).";
+  if (titleEn === null) errors.titleEn = "الاسم الإنجليزي يتجاوز 160 حرفًا.";
+  if (!slug || slug.length < 3 || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+    errors.slug = "استخدم حروفًا إنجليزية صغيرة وأرقامًا وشرطات فقط، بطول 3–120 حرفًا.";
   }
+  if (descriptionAr === null) errors.descriptionAr = "الوصف طويل جدًا (الحد 5000 حرف).";
+  if (!category || !CATEGORIES.has(category)) errors.category = "اختر تصنيفًا صحيحًا.";
+  if (!venue) errors.venue = "أدخل موقعًا داخل جدة.";
+  if (!imageUrl || !safeImageUrl(imageUrl)) {
+    errors.imageUrl = "الرابط يجب أن يبدأ بـ https://images.unsplash.com/ ومن دون اسم مستخدم أو منفذ.";
+  }
+  if (!provider || !PROVIDERS.has(provider)) errors.ticketProvider = "اختر منصة التذاكر من القائمة.";
+  if (!ticketUrl || !/^https:\/\//i.test(ticketUrl)) errors.ticketUrl = "أدخل رابط صفحة التذاكر ويجب أن يبدأ بـ https://";
+
   const startAt = timeInput ? localSaudiDate(timeInput) : null;
-  if (timeInput && !startAt) return null;
-  if (!/^https:\/\//i.test(ticketUrl) || ticketUrl.length > 2048) return null;
+  if (timeInput === null || (timeInput && !startAt)) errors.startAt = "وقت البداية غير صالح. استخدم تاريخًا ووقتًا صحيحين بتوقيت السعودية.";
+  if (scheduleLabel === null) errors.scheduleLabel = "وصف الموعد يتجاوز 160 حرفًا.";
+  if (!timeInput && !scheduleLabel) errors.scheduleLabel = "أدخل وصف موعد مثل «يحدد لاحقًا» أو اختر وقت البداية.";
 
   let amountFrom: number | null = null;
-  if (amountInput) {
-    if (!/^(?:0|[1-9]\d{0,5})(?:\.\d{1,2})?$/.test(amountInput)) return null;
+  if (amountInput === null || (amountInput !== "" && !/^(?:0|[1-9]\d{0,5})(?:\.\d{1,2})?$/.test(amountInput))) {
+    errors.amountFrom = "أدخل سعرًا من 0 إلى 999999 بحد أقصى منزلتين عشريتين، أو اتركه فارغًا.";
+  } else if (amountInput) {
     amountFrom = Number(amountInput);
-    if (!Number.isFinite(amountFrom) || amountFrom > 999999) return null;
+    if (!Number.isFinite(amountFrom) || amountFrom > 999999) errors.amountFrom = "السعر غير صالح.";
   }
 
+  if (Object.keys(errors).length !== 0) return { value: null, errors };
+  // All nullable values were validated above; the assertions are constrained to that result.
   return {
-    slug,
-    titleAr,
-    titleEn: titleEn || null,
-    descriptionAr: descriptionAr || null,
-    imageUrl,
-    category,
-    venue,
-    startAt,
-    scheduleLabel: scheduleLabel || null,
-    amountFrom,
-    ticketProvider: provider as DraftEventInput["ticketProvider"],
-    ticketUrl,
+    value: {
+      slug: slug!, titleAr: titleAr!, titleEn: titleEn || null,
+      descriptionAr: descriptionAr || null, imageUrl: imageUrl!, category: category!,
+      venue: venue!, startAt, scheduleLabel: scheduleLabel || null,
+      amountFrom, ticketProvider: provider as DraftEventInput["ticketProvider"],
+      ticketUrl: ticketUrl!,
+    },
+    errors,
   };
+}
+
+/** Kept for existing callers and tests. */
+export function parseDraftEventForm(form: FormData): DraftEventInput | null {
+  return validateDraftEventForm(form).value;
 }

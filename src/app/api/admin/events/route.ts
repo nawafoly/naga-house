@@ -1,17 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb, getCurrentAdmin } from "@/features/admin/server/auth";
-import { parseDraftEventForm } from "@/features/admin/domain/parse-draft-event";
+import { validateDraftEventForm, type DraftFieldErrors } from "@/features/admin/domain/parse-draft-event";
 import { isTrustedTicketUrl } from "@/features/events/domain/ticket-provider";
 
 export const dynamic = "force-dynamic";
 
-function fail(request: NextRequest, code: string) {
+function result(request: NextRequest, code: string, fields: DraftFieldErrors = {}, status = 422) {
+  if (request.headers.get("accept")?.includes("application/json")) {
+    return NextResponse.json({ ok: false, code, fields }, { status, headers: { "Cache-Control": "no-store" } });
+  }
   const response = NextResponse.redirect(new URL(`/admin/events/new?error=${code}`, request.url), 303);
   response.headers.set("Cache-Control", "no-store");
   return response;
 }
 
-/** Same-origin, authenticated HTML form. Always drafts; never writes to published catalog. */
+/** Protected HTML submission. Invalid inputs return field errors without clearing the form. */
 export async function POST(request: NextRequest) {
   const origin = request.headers.get("origin");
   if (!origin || origin !== new URL(request.url).origin) {
@@ -30,23 +33,25 @@ export async function POST(request: NextRequest) {
   catch { return new Response("Admin session unavailable", { status: 503 }); }
   if (!admin) return new Response("Unauthorized", { status: 401 });
 
-  let input;
-  try { input = parseDraftEventForm(await request.formData()); }
-  catch { return fail(request, "invalid"); }
-  if (!input || !isTrustedTicketUrl(input.ticketProvider, input.ticketUrl)) {
-    return fail(request, "invalid");
+  let validation;
+  try { validation = validateDraftEventForm(await request.formData()); }
+  catch { return result(request, "invalid"); }
+  if (!validation.value) return result(request, "invalid", validation.errors);
+  const input = validation.value;
+  if (!isTrustedTicketUrl(input.ticketProvider, input.ticketUrl)) {
+    return result(request, "invalid", {
+      ticketUrl: "الرابط لا يطابق منصة التذاكر المختارة، أو أنه رابط عام وليس صفحة فعالية محددة.",
+    });
   }
 
   try {
     const db = getAdminDb();
     const existing = await db.prepare("SELECT id FROM events WHERE slug = ? LIMIT 1")
       .bind(input.slug).first<{ id: string }>();
-    if (existing) return fail(request, "duplicate");
+    if (existing) return result(request, "duplicate", { slug: "المعرّف مستخدم سابقًا. اختر معرّفًا مختلفًا." }, 409);
 
     const eventId = crypto.randomUUID();
     const afterJson = JSON.stringify({ slug: input.slug, titleAr: input.titleAr, status: "draft" });
-    // Cloudflare D1 batch commits both inserts atomically, or rolls both back.
-    // Local interface in auth.ts exposes prepare only, so extend its type here.
     const transactionalDb = db as typeof db & {
       batch(statements: Array<ReturnType<typeof db.prepare>>): Promise<unknown>;
     };
@@ -64,11 +69,13 @@ export async function POST(request: NextRequest) {
         VALUES (?, ?, 'event.create', 'event', ?, ?)`)
         .bind(crypto.randomUUID(), admin.id, eventId, afterJson),
     ]);
+    if (request.headers.get("accept")?.includes("application/json")) {
+      return NextResponse.json({ ok: true, redirect: "/admin/events?created=1" }, { headers: { "Cache-Control": "no-store" } });
+    }
     const response = NextResponse.redirect(new URL("/admin/events?created=1", request.url), 303);
     response.headers.set("Cache-Control", "no-store");
     return response;
   } catch {
-    // Do not expose SQL messages, schema, cookies or other internals to the browser.
-    return fail(request, "server");
+    return result(request, "server", {}, 503);
   }
 }
