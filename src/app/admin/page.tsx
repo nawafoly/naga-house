@@ -37,8 +37,11 @@ export default async function AdminDashboard() {
         </div>
         <section className="mt-9 rounded-2xl border border-[#69816e] bg-[#324b36] p-7">
           <h2 className="mb-3 text-xl font-bold">إدارة الفعاليات</h2>
-          <p className="mb-5 leading-8 text-[#f8eedb]/75">تم تفعيل نظام المصادقة. قائمة الفعاليات المتصلة بـD1 متاحة للمراجعة، وإضافة وتعديل الفعاليات ستكون في المرحلة التالية بعد الاختبار.</p>
-          <Link className="inline-block rounded-lg bg-[#ed8b52] px-5 py-3 font-semibold text-[#222222]" href="/admin/events">استعراض الفعاليات</Link>
+          <p className="mb-5 leading-8 text-[#f8eedb]/75">يمكنك الآن إضافة فعاليات كمسودات في D1 المحلية. التحرير والنشر وربط الفعاليات بالصفحات العامة ستكون في المراحل التالية.</p>
+          <div className="flex flex-wrap gap-3">
+            <Link className="inline-block rounded-lg bg-[#ed8b52] px-5 py-3 font-semibold text-[#222222]" href="/admin/events/new">إضافة مسودة</Link>
+            <Link className="inline-block rounded-lg border border-[#69816e] px-5 py-3 font-semibold" href="/admin/events">استعراض الفعاليات</Link>
+          </div>
         </section>
       </div>
     </main>
