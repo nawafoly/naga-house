@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentAdmin } from "@/features/admin/server/auth";
 
-export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = { title: "تسجيل دخول الإدارة", robots: { index: false, follow: false } };
 
 const messages: Record<string, string> = {

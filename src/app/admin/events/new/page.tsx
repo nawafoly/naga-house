@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentAdmin } from "@/features/admin/server/auth";
 import { DraftEventForm } from "./DraftEventForm";
 
-export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "إضافة مسودة فعالية",
   robots: { index: false, follow: false },

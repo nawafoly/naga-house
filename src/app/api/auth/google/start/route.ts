@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookieOptions, googleAuthorization, oauthCookieName } from "@/features/admin/server/auth";
 
-export const dynamic = "force-dynamic";
+
 
 export async function GET(request: NextRequest) {
   try {

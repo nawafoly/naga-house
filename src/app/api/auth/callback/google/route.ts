@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminSessionMaxAge, cookieOptions, createSessionForGoogle, oauthCookieName, sessionCookieName, verifiedGoogleProfile } from "@/features/admin/server/auth";
 
-export const dynamic = "force-dynamic";
+
 
 export async function GET(request: NextRequest) {
   const options = cookieOptions(request.url);

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getAdminDb, getCurrentAdmin } from "@/features/admin/server/auth";
 
-export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = { title: "لوحة إدارة NAGA HOUSE", robots: { index: false, follow: false } };
 
 type Stats = { total: number; published: number; drafts: number };

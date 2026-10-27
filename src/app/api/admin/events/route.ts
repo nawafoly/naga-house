@@ -3,7 +3,7 @@ import { getAdminDb, getCurrentAdmin } from "@/features/admin/server/auth";
 import { validateDraftEventForm, type DraftFieldErrors } from "@/features/admin/domain/parse-draft-event";
 import { isTrustedTicketUrl } from "@/features/events/domain/ticket-provider";
 
-export const dynamic = "force-dynamic";
+
 
 function result(request: NextRequest, code: string, fields: DraftFieldErrors = {}, status = 422) {
   if (request.headers.get("accept")?.includes("application/json")) {
