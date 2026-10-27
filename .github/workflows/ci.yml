@@ -43,5 +43,5 @@ jobs:
       - name: TypeScript
         run: ./node_modules/.bin/tsc --noEmit
 
-      - name: Production build
-        run: npm run build
+      - name: Production build (Vinext)
+        run: npm run build:vinext
