@@ -37,6 +37,9 @@ jobs:
       - name: Generate Cloudflare types
         run: npx --no-install cf workers types
 
+      - name: Unit tests
+        run: node --test
+
       - name: Lint
         run: npm run lint
 
