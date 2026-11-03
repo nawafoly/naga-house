@@ -1,10 +1,9 @@
 import Link from "next/link";
 
-import { CuratedEventRepository } from "@/features/events/data";
 import { eventCategoryLabels } from "@/features/events/domain";
-import { EventService } from "@/features/events/services";
+import { getPublicEventService } from "@/features/events/server/public-event-service";
 
-const eventService = new EventService(new CuratedEventRepository());
+export const dynamic = "force-dynamic";
 
 const categoryDescriptions: Record<string, string> = {
   music: "حفلات، موسيقى، دي جي وتجارب موسيقية مباشرة.",
@@ -34,7 +33,7 @@ const categoryAccents: Record<string, string> = {
 };
 
 export default async function CategoriesPage() {
-  const events = await eventService.getPublishedEvents();
+  const events = await getPublicEventService().getPublishedEvents();
 
   const categoryCounts = events.reduce<Record<string, number>>(
     (counts, event) => {

@@ -4,13 +4,12 @@ import {
   EventCard,
   EventLiveSearch,
 } from "@/features/events/components";
-import { CuratedEventRepository } from "@/features/events/data";
 import { getEventCategoryLabel } from "@/features/events/domain";
-import { EventService } from "@/features/events/services";
+import { getPublicEventService } from "@/features/events/server/public-event-service";
 
 export const instant = false;
+export const dynamic = "force-dynamic";
 
-const eventService = new EventService(new CuratedEventRepository());
 
 interface EventsPageProps {
   searchParams: Promise<{
@@ -22,6 +21,7 @@ interface EventsPageProps {
 export default async function EventsPage({
   searchParams,
 }: EventsPageProps) {
+  const eventService = getPublicEventService();
   const params = await searchParams;
 
   const search = params.search?.trim() ?? "";

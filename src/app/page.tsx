@@ -2,13 +2,12 @@ import Link from "next/link";
 
 import { HeroSection } from "@/components/layout";
 import { EventCard } from "@/features/events/components";
-import { CuratedEventRepository } from "@/features/events/data";
-import { EventService } from "@/features/events/services";
+import { getPublicEventService } from "@/features/events/server/public-event-service";
 
-const eventService = new EventService(new CuratedEventRepository());
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const events = await eventService.getFeaturedEvents();
+  const events = await getPublicEventService().getFeaturedEvents();
 
   return (
     <main className="min-h-screen bg-brand-ink text-brand-cream">

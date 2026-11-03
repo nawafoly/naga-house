@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { CuratedEventRepository } from "@/features/events/data";
-import { EventService } from "@/features/events/services";
+import { getPublicEventService } from "@/features/events/server/public-event-service";
 
-const eventService = new EventService(new CuratedEventRepository());
+export const dynamic = "force-dynamic";
 
 function normalizeSearchValue(value: string) {
   return value
@@ -50,7 +49,7 @@ export async function GET(request: NextRequest) {
   }
 
   const publishedEvents =
-    await eventService.getPublishedEvents();
+    await getPublicEventService().getPublishedEvents();
 
   const events = publishedEvents
     .filter(
