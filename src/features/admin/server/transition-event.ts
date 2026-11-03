@@ -1,4 +1,4 @@
-import { allowedNextEventStatuses, isEventLifecycleStatus } from "../domain/event-lifecycle";
+import { allowedNextEventStatuses, isEventLifecycleStatus } from "../domain/event-lifecycle.ts";
 
 type BindValue = string | number | null;
 
