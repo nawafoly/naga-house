@@ -1,4 +1,4 @@
-import { allowedNextEventStatuses } from "../domain/event-lifecycle";
+import { allowedNextEventStatuses, isEventLifecycleStatus } from "../domain/event-lifecycle";
 
 type BindValue = string | number | null;
 
@@ -53,7 +53,8 @@ export async function transitionEventStatus(
   if (!row) return "not_found";
   if (row.slug !== confirmationSlug) return "invalid";
   if (row.updated_at !== expectedUpdatedAt) return "conflict";
-  if (!allowedNextEventStatuses(row.status).includes(targetStatus as never)) return "invalid";
+  if (!isEventLifecycleStatus(targetStatus) ||
+      !allowedNextEventStatuses(row.status).includes(targetStatus)) return "invalid";
 
   // Reactivating sold-out tickets requires the same trusted links as initial publication.
   if (targetStatus === "published" &&
