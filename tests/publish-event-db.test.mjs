@@ -103,3 +103,17 @@ test("publish endpoint requires same-origin, admin session and server-side permi
   assert.match(route, /publishDraftEvent\(/);
   assert.doesNotMatch(route, /export async function GET/);
 });
+
+test("failed event update rolls back the publication audit in the same D1 batch", async () => {
+  const { sqlite, db, ids } = setup();
+  try {
+    sqlite.exec(`CREATE TRIGGER reject_publish BEFORE UPDATE OF status ON events
+      WHEN NEW.status = 'published' BEGIN SELECT RAISE(ABORT, 'blocked'); END`);
+    await assert.rejects(
+      publishDraftEvent(db, actor, ids.draft, "test-draft", validators),
+      /blocked/
+    );
+    assert.equal(sqlite.prepare("SELECT status FROM events WHERE id = ?").get(ids.draft).status, "draft");
+    assert.equal(sqlite.prepare("SELECT COUNT(*) AS n FROM admin_audit_logs").get().n, 0);
+  } finally { sqlite.close(); }
+});
