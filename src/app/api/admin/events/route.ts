@@ -11,6 +11,7 @@ import {
 
 import {
   validateDraftEventForm,
+  MAX_DRAFT_FORM_BODY_BYTES,
   type DraftFieldErrors,
 } from "@/features/admin/domain/parse-draft-event";
 
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
 
   const size = Number(request.headers.get("content-length"));
 
-  if (Number.isFinite(size) && size > 20_000) {
+  if (Number.isFinite(size) && size > MAX_DRAFT_FORM_BODY_BYTES) {
     return new Response("Payload too large", {
       status: 413,
     });
