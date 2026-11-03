@@ -1,4 +1,4 @@
-import type { Event, EventQuery, TicketProvider } from "../domain";
+import type { Event, EventQuery, EventStatus, TicketProvider } from "../domain";
 import type { EventRepository } from "./event.repository";
 
 type BindValue = string | number | null;
@@ -16,6 +16,7 @@ export interface PublicD1Database {
 type EventRow = {
   id: string;
   slug: string;
+  status: EventStatus;
   title_ar: string;
   title_en: string | null;
   description_ar: string | null;
@@ -42,10 +43,12 @@ const columns = `
   id, slug, title_ar, title_en, description_ar, description_en,
   image_url, cover_image_url, category, city, venue, latitude, longitude,
   start_at, end_at, schedule_label, amount_from, ticket_provider,
-  ticket_url, featured, created_at, updated_at`;
+  ticket_url, status, featured, created_at, updated_at`;
 
 // This filter is mandatory on EVERY public read, including direct slug lookups.
-const publicWhere = "status = 'published' AND deleted_at IS NULL";
+const publicWhere = "status IN ('published', 'sold_out') AND deleted_at IS NULL";
+// Direct links remain informative after cancellation or end, but drafts stay private.
+const publicDetailWhere = "status IN ('published', 'sold_out', 'cancelled', 'ended') AND deleted_at IS NULL";
 const orderBy = "ORDER BY (start_at IS NULL), start_at ASC, created_at DESC";
 
 function toEvent(row: EventRow): Event {
@@ -75,7 +78,7 @@ function toEvent(row: EventRow): Event {
     ticketProvider: row.ticket_provider,
     ticketUrl: row.ticket_url,
     featured: row.featured === 1,
-    status: "published",
+    status: row.status,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -107,12 +110,12 @@ export class D1PublicEventRepository implements EventRepository {
   }
 
   getFeatured(): Promise<Event[]> {
-    return this.list(`${publicWhere} AND featured = 1`);
+    return this.list(`${publicWhere} AND status = 'published' AND featured = 1`);
   }
 
   async getBySlug(slug: string): Promise<Event | null> {
     const row = await this.db
-      .prepare(`SELECT ${columns} FROM events WHERE ${publicWhere} AND slug = ? LIMIT 1`)
+      .prepare(`SELECT ${columns} FROM events WHERE ${publicDetailWhere} AND slug = ? LIMIT 1`)
       .bind(slug)
       .first<EventRow>();
     return row ? toEvent(row) : null;
