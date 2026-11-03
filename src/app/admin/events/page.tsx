@@ -31,7 +31,7 @@ const publishErrors: Record<string, string> = {
 export default async function AdminEvents({
   searchParams,
 }: {
-  searchParams: Promise<{ created?: string; edited?: string; edit_error?: string; published?: string; publish_error?: string; status_changed?: string; status_error?: string }>;
+  searchParams: Promise<{ created?: string; edited?: string; edit_error?: string; published?: string; publish_error?: string; status_changed?: string; status_error?: string; live_edited?: string; live_edit_error?: string }>;
 }) {
   let admin;
   try { admin = await getCurrentAdmin(); }
@@ -48,7 +48,7 @@ export default async function AdminEvents({
     redirect("/admin/login?error=server");
   }
 
-  const { created, edited, edit_error: editError, published, publish_error: publishError, status_changed: statusChanged, status_error: statusError } = await searchParams;
+  const { created, edited, edit_error: editError, published, publish_error: publishError, status_changed: statusChanged, status_error: statusError, live_edited: liveEdited, live_edit_error: liveEditError } = await searchParams;
   const canPublish = hasAdminPermission(admin.role, "events.publish");
   const canEdit = hasAdminPermission(admin.role, "events.draft.edit");
 
@@ -73,6 +73,12 @@ export default async function AdminEvents({
         )}
         {edited === "1" && (
           <div role="status" className="mb-6 rounded-lg border border-[#69816e] bg-[#324b36] p-4">تم حفظ تعديل المسودة في D1 بنجاح.</div>
+        )}
+        {liveEdited === "1" && (
+          <div role="status" className="mb-6 rounded-lg border border-[#69816e] bg-[#324b36] p-4">تم حفظ تحديث بيانات الفعالية المنشورة وتسجيله في سجل التدقيق.</div>
+        )}
+        {liveEditError && (
+          <div role="alert" className="mb-6 rounded-lg border border-[#ed8b52] bg-[#613c32] p-4">تعذر تحديث الفعالية المنشورة. حدّث الصفحة وتأكد من صحة البيانات.</div>
         )}
         {editError && (
           <div role="alert" className="mb-6 rounded-lg border border-[#ed8b52] bg-[#613c32] p-4">تعذر تعديل المسودة. حدّث الصفحة وتأكد من صلاحية البيانات.</div>
@@ -115,6 +121,11 @@ export default async function AdminEvents({
                   <tr className="border-t border-[#69816e]/50" key={event.id}>
                     <td className="p-4">
                       <span>{event.title_ar}</span>
+                      {canPublish && (event.status === "published" || event.status === "sold_out") && (
+                        <div className="mt-2 text-xs font-bold text-[#ed8b52]">
+                          <Link href={`/admin/events/${encodeURIComponent(event.id)}/live-edit`}>تعديل بيانات الفعالية المنشورة</Link>
+                        </div>
+                      )}
                       {event.status === "draft" && (
                         <div className="mt-2 flex flex-wrap gap-3 text-xs font-bold text-[#ed8b52]">
                           {canEdit && <Link href={`/admin/events/${encodeURIComponent(event.id)}/edit`}>تعديل المسودة</Link>}
