@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getEventCategoryLabel, isTrustedTicketUrl, type Event } from "@/features/events/domain";
+import { eventStatusLabels, eventStatusNotice, getEventCategoryLabel, isTrustedTicketUrl, type Event } from "@/features/events/domain";
 
 function formatEventDate(value: string) {
   return new Intl.DateTimeFormat(
@@ -37,7 +37,7 @@ export function EventDetailsView({
     ? `${event.price.amountFrom} ر.س`
     : "يحدد لاحقًا";
 
-  const canBook = isTrustedTicketUrl(
+  const canBook = event.status === "published" && isTrustedTicketUrl(
     event.ticketProvider,
     event.ticketUrl
   );
@@ -91,6 +91,9 @@ export function EventDetailsView({
                 <span className="rounded-full bg-brand-orange px-5 py-2.5 text-sm font-extrabold text-brand-ink">
                   فعالية مميزة
                 </span>
+              )}
+              {!preview && event.status !== "published" && event.status !== "draft" && (
+                <span className="rounded-full border border-brand-orange bg-brand-ink px-5 py-2.5 text-sm font-bold text-brand-cream">{eventStatusLabels[event.status]}</span>
               )}
             </div>
 
@@ -222,7 +225,7 @@ export function EventDetailsView({
                     <span aria-hidden="true">↗</span>
                   </button>
                   <p className="text-center text-sm leading-6 text-brand-copper">
-                    {preview ? "هذه معاينة خاصة للمسودة. الحجز غير متاح قبل النشر." : "رابط التذكرة الرسمي لهذه الفعالية لم يُضف بعد."}
+                    {preview ? "هذه معاينة خاصة للمسودة. الحجز غير متاح قبل النشر." : eventStatusNotice[event.status] ?? "رابط التذكرة الرسمي لهذه الفعالية لم يُضف بعد."}
                   </p>
                 </>
               )}

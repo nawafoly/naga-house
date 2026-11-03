@@ -22,6 +22,9 @@ function repository() {
 
   insert.run("published-jed", "published-jed", "حفلة جدة", "jeddah", "published", 1, null);
   insert.run("published-ruh", "published-ruh", "حفلة الرياض", "riyadh", "published", 0, null);
+  insert.run("soldout-jed", "soldout-jed", "نفدت في جدة", "jeddah", "sold_out", 1, null);
+  insert.run("cancelled-jed", "cancelled-jed", "ملغاة", "jeddah", "cancelled", 0, null);
+  insert.run("ended-jed", "ended-jed", "منتهية", "jeddah", "ended", 0, null);
   insert.run("draft-secret", "draft-secret", "مسودة سرية", "jeddah", "draft", 1, null);
   insert.run("deleted-secret", "deleted-secret", "محذوفة", "jeddah", "published", 1, "2026-11-01T00:00:00.000Z");
 
@@ -41,10 +44,13 @@ function repository() {
 test("all public reads filter drafts and soft-deleted events", async () => {
   const { sqlite, repo } = repository();
   try {
-    assert.deepEqual((await repo.getAll()).map(({ slug }) => slug).sort(), ["published-jed", "published-ruh"]);
-    assert.deepEqual((await repo.getPublished()).map(({ slug }) => slug).sort(), ["published-jed", "published-ruh"]);
+    assert.deepEqual((await repo.getAll()).map(({ slug }) => slug).sort(), ["published-jed", "published-ruh", "soldout-jed"]);
+    assert.deepEqual((await repo.getPublished()).map(({ slug }) => slug).sort(), ["published-jed", "published-ruh", "soldout-jed"]);
     assert.deepEqual((await repo.getFeatured()).map(({ slug }) => slug), ["published-jed"]);
     assert.equal(await repo.getBySlug("draft-secret"), null);
+    assert.equal((await repo.getBySlug("soldout-jed"))?.status, "sold_out");
+    assert.equal((await repo.getBySlug("cancelled-jed"))?.status, "cancelled");
+    assert.equal((await repo.getBySlug("ended-jed"))?.status, "ended");
     assert.equal(await repo.getBySlug("deleted-secret"), null);
     assert.equal(await repo.getBySlug("nonexistent"), null);
     assert.equal((await repo.getBySlug("published-jed"))?.status, "published");
@@ -54,9 +60,11 @@ test("all public reads filter drafts and soft-deleted events", async () => {
 test("public search filters city, category, and title without leaking drafts", async () => {
   const { sqlite, repo } = repository();
   try {
-    assert.deepEqual((await repo.searchPublished({ city: "Jeddah", category: "music" })).map(({ slug }) => slug), ["published-jed"]);
+    assert.deepEqual((await repo.searchPublished({ city: "Jeddah", category: "music" })).map(({ slug }) => slug).sort(), ["published-jed", "soldout-jed"]);
     assert.deepEqual((await repo.searchPublished({ search: "حفلة" })).map(({ slug }) => slug).sort(), ["published-jed", "published-ruh"]);
     assert.deepEqual(await repo.searchPublished({ search: "سرية" }), []);
+    assert.deepEqual(await repo.searchPublished({ search: "ملغاة" }), []);
+    assert.deepEqual(await repo.searchPublished({ search: "منتهية" }), []);
     assert.deepEqual(await repo.searchPublished({ search: "%' OR 1=1 --" }), []);
     const found = await repo.getBySlug("published-jed");
     assert.equal(found?.location.city, "jeddah");

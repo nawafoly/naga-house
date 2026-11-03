@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import {
+  eventStatusLabels,
   getEventCategoryLabel,
   type Event,
 } from "../domain";
@@ -53,6 +54,9 @@ export function EventCard({ event, eager = false }: EventCardProps) {
             <span className="rounded-full bg-brand-orange px-4 py-2 text-sm font-extrabold text-brand-ink">
               مميز
             </span>
+          )}
+          {event.status === "sold_out" && (
+            <span className="rounded-full border border-brand-orange bg-brand-ink px-4 py-2 text-sm font-bold text-brand-cream">{eventStatusLabels.sold_out}</span>
           )}
         </div>
 

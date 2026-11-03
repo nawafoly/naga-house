@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { hasAdminPermission } from "@/features/admin/domain/permissions";
+import { allowedNextEventStatuses, eventStatusLabels, isEventLifecycleStatus } from "@/features/admin/domain/event-lifecycle";
 import { getAdminDb, getCurrentAdmin } from "@/features/admin/server/auth";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +19,7 @@ type AdminEvent = {
   status: string;
   city: string;
   start_at: string | null;
+  updated_at: string;
 };
 
 const publishErrors: Record<string, string> = {
@@ -29,7 +31,7 @@ const publishErrors: Record<string, string> = {
 export default async function AdminEvents({
   searchParams,
 }: {
-  searchParams: Promise<{ created?: string; edited?: string; edit_error?: string; published?: string; publish_error?: string }>;
+  searchParams: Promise<{ created?: string; edited?: string; edit_error?: string; published?: string; publish_error?: string; status_changed?: string; status_error?: string }>;
 }) {
   let admin;
   try { admin = await getCurrentAdmin(); }
@@ -38,7 +40,7 @@ export default async function AdminEvents({
 
   let events: AdminEvent[];
   try {
-    const result = await getAdminDb().prepare(`SELECT id, slug, title_ar, status, city, start_at
+    const result = await getAdminDb().prepare(`SELECT id, slug, title_ar, status, city, start_at, updated_at
       FROM events WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 100`)
       .all<AdminEvent>();
     events = result.results;
@@ -46,7 +48,7 @@ export default async function AdminEvents({
     redirect("/admin/login?error=server");
   }
 
-  const { created, edited, edit_error: editError, published, publish_error: publishError } = await searchParams;
+  const { created, edited, edit_error: editError, published, publish_error: publishError, status_changed: statusChanged, status_error: statusError } = await searchParams;
   const canPublish = hasAdminPermission(admin.role, "events.publish");
   const canEdit = hasAdminPermission(admin.role, "events.draft.edit");
 
@@ -75,6 +77,12 @@ export default async function AdminEvents({
         {editError && (
           <div role="alert" className="mb-6 rounded-lg border border-[#ed8b52] bg-[#613c32] p-4">تعذر تعديل المسودة. حدّث الصفحة وتأكد من صلاحية البيانات.</div>
         )}
+        {statusChanged === "1" && (
+          <div role="status" className="mb-6 rounded-lg border border-[#69816e] bg-[#324b36] p-4">تم تغيير حالة الفعالية وتسجيل العملية في سجل التدقيق.</div>
+        )}
+        {statusError && (
+          <div role="alert" className="mb-6 rounded-lg border border-[#ed8b52] bg-[#613c32] p-4">تعذر تغيير الحالة. تأكد من المعرّف وحالة الفعالية، وحدّث الصفحة قبل إعادة المحاولة.</div>
+        )}
         {published === "1" && (
           <div role="status" className="mb-6 rounded-lg border border-[#69816e] bg-[#324b36] p-4">
             تم نشر الفعالية بنجاح، وأصبحت متاحة في صفحات الزوار.
@@ -99,7 +107,7 @@ export default async function AdminEvents({
                   <th className="p-4">المدينة</th>
                   <th className="p-4">الحالة</th>
                   <th className="p-4">البداية</th>
-                  {canPublish && <th className="p-4">النشر</th>}
+                  {canPublish && <th className="p-4">النشر وإدارة الحالة</th>}
                 </tr>
               </thead>
               <tbody>
@@ -115,7 +123,7 @@ export default async function AdminEvents({
                       )}
                     </td>
                     <td className="p-4">{event.city}</td>
-                    <td className="p-4">{event.status === "draft" ? "مسودة" : event.status === "published" ? "منشورة" : event.status}</td>
+                    <td className="p-4">{isEventLifecycleStatus(event.status) ? eventStatusLabels[event.status] : event.status}</td>
                     <td className="p-4">{event.start_at || "غير محدد"}</td>
                     {canPublish && (
                       <td className="p-4">
@@ -138,6 +146,20 @@ export default async function AdminEvents({
                             <button type="submit" className="rounded-lg bg-[#ed8b52] px-4 py-2 font-bold text-[#222222]">
                               نشر الفعالية
                             </button>
+                          </form>
+                        ) : allowedNextEventStatuses(event.status).length > 0 ? (
+                          <form method="post" action={`/api/admin/events/${encodeURIComponent(event.id)}/status`} className="flex min-w-[220px] flex-col gap-2">
+                            <input type="hidden" name="version" value={event.updated_at} />
+                            <label className="text-xs text-[#f8eedb]/85" htmlFor={`status-${event.id}`}>تغيير الحالة</label>
+                            <select id={`status-${event.id}`} name="targetStatus" defaultValue="" required className="rounded-lg border border-[#69816e] bg-[#222222] p-2 text-[#f8eedb]">
+                              <option value="" disabled>اختر الحالة الجديدة</option>
+                              {allowedNextEventStatuses(event.status).map((status) => (
+                                <option value={status} key={status}>{status === "draft" ? "إلغاء النشر وإرجاعها لمسودة" : eventStatusLabels[status]}</option>
+                              ))}
+                            </select>
+                            <label className="text-xs text-[#f8eedb]/85" htmlFor={`status-confirm-${event.id}`}>اكتب المعرّف لتأكيد التغيير: <span dir="ltr" className="font-bold">{event.slug}</span></label>
+                            <input id={`status-confirm-${event.id}`} name="confirmSlug" type="text" dir="ltr" autoComplete="off" required maxLength={120} pattern="[a-z0-9]+(-[a-z0-9]+)*" className="rounded-lg border border-[#69816e] bg-[#222222] p-2 text-[#f8eedb]" />
+                            <button type="submit" className="rounded-lg border border-[#ed8b52] px-4 py-2 font-bold text-[#ed8b52]">تأكيد تغيير الحالة</button>
                           </form>
                         ) : "—"}
                       </td>
