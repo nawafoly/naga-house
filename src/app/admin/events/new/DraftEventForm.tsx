@@ -13,7 +13,12 @@ function FieldError({ field, errors }: { field: string; errors: FieldErrors }) {
 }
 
 /** Client-side enhancement: server still verifies all permissions and all form fields. */
-export function DraftEventForm() {
+export function DraftEventForm({ eventId, version, initialValues }: {
+  eventId?: string;
+  version?: string;
+  initialValues?: Record<string, string>;
+}) {
+  const endpoint = eventId ? `/api/admin/events/${encodeURIComponent(eventId)}/edit` : "/api/admin/events";
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [summary, setSummary] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -30,7 +35,7 @@ export function DraftEventForm() {
     setSummary("");
     setFieldErrors({});
     try {
-      const response = await fetch("/api/admin/events", {
+      const response = await fetch(endpoint, {
         method: "POST",
         credentials: "same-origin",
         headers: { "Accept": "application/json", "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
@@ -44,7 +49,9 @@ export function DraftEventForm() {
         }
         const errors = payload.fields ?? {};
         setFieldErrors(errors);
-        setSummary(payload.code === "duplicate"
+        setSummary(payload.code === "conflict"
+          ? "تغيّرت المسودة منذ فتح الصفحة. حدّث الصفحة ثم أعد التعديل."
+          : payload.code === "duplicate"
           ? "هذا المعرّف مستخدم بالفعل. عدّله ثم أعد الحفظ."
           : payload.code === "server"
             ? "تعذر الحفظ في قاعدة البيانات. لم يتم مسح المدخلات، ويمكن المحاولة بعد التحقق من D1."
@@ -64,29 +71,30 @@ export function DraftEventForm() {
   }
 
   return (
-        <form method="post" action="/api/admin/events" onSubmit={(event) => { void handleSubmit(event); }} className="grid gap-6 rounded-2xl border border-[#69816e] bg-[#324b36] p-6 sm:p-8">
+        <form method="post" action={endpoint} onSubmit={(event) => { void handleSubmit(event); }} className="grid gap-6 rounded-2xl border border-[#69816e] bg-[#324b36] p-6 sm:p-8">
+          {eventId && <input type="hidden" name="version" value={version ?? ""} />}
           {summary && <div role="alert" aria-live="assertive" className="rounded-xl border border-[#ed8b52] bg-[#613c32] p-4 text-sm">{summary}</div>}
           <div className="grid gap-5 sm:grid-cols-2">
             <label className={labelClass}>اسم الفعالية بالعربية *
-              <input className={inputClass} name="titleAr" maxLength={160} minLength={2} required placeholder="مثل: حفلة موسيقية في جدة" />
+              <input className={inputClass} name="titleAr" defaultValue={initialValues?.titleAr ?? ""} maxLength={160} minLength={2} required placeholder="مثل: حفلة موسيقية في جدة" />
 <FieldError field="titleAr" errors={fieldErrors} />
             </label>
             <label className={labelClass}>الاسم بالإنجليزية (اختياري)
-              <input className={inputClass} name="titleEn" maxLength={160} dir="ltr" />
+              <input className={inputClass} name="titleEn" defaultValue={initialValues?.titleEn ?? ""} maxLength={160} dir="ltr" />
 <FieldError field="titleEn" errors={fieldErrors} />
             </label>
           </div>
           <label className={labelClass}>المعرّف في الرابط (بالإنجليزية) *
-            <input className={inputClass} name="slug" maxLength={120} minLength={3} required dir="ltr" placeholder="jeddah-music-night-2026" pattern="[a-z0-9]+(-[a-z0-9]+)*" />
+            <input className={inputClass} name="slug" readOnly={!!eventId} defaultValue={initialValues?.slug ?? ""} maxLength={120} minLength={3} required dir="ltr" placeholder="jeddah-music-night-2026" pattern="[a-z0-9]+(-[a-z0-9]+)*" />
 <FieldError field="slug" errors={fieldErrors} />
           </label>
           <label className={labelClass}>وصف الفعالية (اختياري)
-            <textarea className={inputClass} rows={4} maxLength={5000} name="descriptionAr" />
+            <textarea className={inputClass} rows={4} maxLength={5000} name="descriptionAr" defaultValue={initialValues?.descriptionAr ?? ""} />
 <FieldError field="descriptionAr" errors={fieldErrors} />
           </label>
           <div className="grid gap-5 sm:grid-cols-2">
             <label className={labelClass}>التصنيف *
-              <select className={inputClass} name="category" defaultValue="music" required>
+              <select className={inputClass} name="category" defaultValue={initialValues?.category ?? "music"} required>
                 <option value="music">موسيقى</option>
                 <option value="theater">مسرح</option>
                 <option value="sports">رياضة</option>
@@ -97,28 +105,28 @@ export function DraftEventForm() {
 <FieldError field="category" errors={fieldErrors} />
             </label>
             <label className={labelClass}>الموقع داخل جدة *
-              <input className={inputClass} name="venue" maxLength={160} required placeholder="اسم المسرح أو القاعة" />
+              <input className={inputClass} name="venue" defaultValue={initialValues?.venue ?? ""} maxLength={160} required placeholder="اسم المسرح أو القاعة" />
 <FieldError field="venue" errors={fieldErrors} />
             </label>
           </div>
           <div className="grid gap-5 sm:grid-cols-2">
             <label className={labelClass}>وقت البداية (بتوقيت السعودية)
-              <input className={inputClass} type="datetime-local" name="startAt" />
+              <input className={inputClass} type="datetime-local" name="startAt" defaultValue={initialValues?.startAt ?? ""} />
 <FieldError field="startAt" errors={fieldErrors} />
             </label>
             <label className={labelClass}>وصف الموعد (بديل للتاريخ)
-              <input className={inputClass} name="scheduleLabel" maxLength={160} placeholder="قريبًا / موعد يعلن لاحقًا" />
+              <input className={inputClass} name="scheduleLabel" defaultValue={initialValues?.scheduleLabel ?? ""} maxLength={160} placeholder="قريبًا / موعد يعلن لاحقًا" />
 <FieldError field="scheduleLabel" errors={fieldErrors} />
             </label>
           </div>
           <p className="text-xs text-[#f8eedb]/75">يجب إدخال تاريخ البداية أو وصف الموعد على الأقل. المدينة مضبوطة على جدة.</p>
           <div className="grid gap-5 sm:grid-cols-2">
             <label className={labelClass}>السعر يبدأ من (ريال، اختياري)
-              <input className={inputClass} name="amountFrom" type="number" min="0" max="999999" step="0.01" />
+              <input className={inputClass} name="amountFrom" defaultValue={initialValues?.amountFrom ?? ""} type="number" min="0" max="999999" step="0.01" />
 <FieldError field="amountFrom" errors={fieldErrors} />
             </label>
             <label className={labelClass}>منصة التذاكر الرسمية *
-              <select className={inputClass} name="ticketProvider" required defaultValue="webook">
+              <select className={inputClass} name="ticketProvider" required defaultValue={initialValues?.ticketProvider ?? "webook"}>
                 <option value="webook">WeBook</option>
                 <option value="ticketmx">TicketMX</option>
                 <option value="platinumlist">Platinumlist</option>
@@ -128,15 +136,15 @@ export function DraftEventForm() {
             </label>
           </div>
           <label className={labelClass}>رابط صفحة التذاكر الرسمية للفعالية *
-            <input className={inputClass} name="ticketUrl" type="url" required dir="ltr" maxLength={2048} placeholder="https://webook.com/..." />
+            <input className={inputClass} name="ticketUrl" defaultValue={initialValues?.ticketUrl ?? ""} type="url" required dir="ltr" maxLength={2048} placeholder="https://webook.com/..." />
 <FieldError field="ticketUrl" errors={fieldErrors} />
           </label>
           <label className={labelClass}>رابط صورة الفعالية من Unsplash *
-            <input className={inputClass} name="imageUrl" type="url" required dir="ltr" maxLength={2048} placeholder="https://images.unsplash.com/..." />
+            <input className={inputClass} name="imageUrl" defaultValue={initialValues?.imageUrl ?? ""} type="url" required dir="ltr" maxLength={2048} placeholder="https://images.unsplash.com/..." />
 <FieldError field="imageUrl" errors={fieldErrors} />
           </label>
           <div className="flex flex-wrap gap-4">
-            <button type="submit" disabled={submitting} className="rounded-lg bg-[#ed8b52] px-6 py-3 font-bold text-[#222222]">{submitting ? "جارٍ الحفظ..." : "حفظ كمسودة"}</button>
+            <button type="submit" disabled={submitting} className="rounded-lg bg-[#ed8b52] px-6 py-3 font-bold text-[#222222]">{submitting ? "جارٍ الحفظ..." : (eventId ? "حفظ التعديلات" : "حفظ كمسودة")}</button>
             <Link href="/admin/events" className="rounded-lg border border-[#69816e] px-6 py-3">إلغاء</Link>
           </div>
         </form>

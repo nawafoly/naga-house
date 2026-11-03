@@ -29,7 +29,7 @@ const publishErrors: Record<string, string> = {
 export default async function AdminEvents({
   searchParams,
 }: {
-  searchParams: Promise<{ created?: string; published?: string; publish_error?: string }>;
+  searchParams: Promise<{ created?: string; edited?: string; edit_error?: string; published?: string; publish_error?: string }>;
 }) {
   let admin;
   try { admin = await getCurrentAdmin(); }
@@ -46,8 +46,9 @@ export default async function AdminEvents({
     redirect("/admin/login?error=server");
   }
 
-  const { created, published, publish_error: publishError } = await searchParams;
+  const { created, edited, edit_error: editError, published, publish_error: publishError } = await searchParams;
   const canPublish = hasAdminPermission(admin.role, "events.publish");
+  const canEdit = hasAdminPermission(admin.role, "events.draft.edit");
 
   return (
     <main dir="rtl" className="min-h-[85vh] bg-[#222222] px-5 py-12 text-[#f8eedb]">
@@ -67,6 +68,12 @@ export default async function AdminEvents({
           <div role="status" className="mb-6 rounded-lg border border-[#69816e] bg-[#324b36] p-4">
             تم حفظ المسودة في D1 بنجاح.
           </div>
+        )}
+        {edited === "1" && (
+          <div role="status" className="mb-6 rounded-lg border border-[#69816e] bg-[#324b36] p-4">تم حفظ تعديل المسودة في D1 بنجاح.</div>
+        )}
+        {editError && (
+          <div role="alert" className="mb-6 rounded-lg border border-[#ed8b52] bg-[#613c32] p-4">تعذر تعديل المسودة. حدّث الصفحة وتأكد من صلاحية البيانات.</div>
         )}
         {published === "1" && (
           <div role="status" className="mb-6 rounded-lg border border-[#69816e] bg-[#324b36] p-4">
@@ -98,7 +105,15 @@ export default async function AdminEvents({
               <tbody>
                 {events.map((event) => (
                   <tr className="border-t border-[#69816e]/50" key={event.id}>
-                    <td className="p-4">{event.title_ar}</td>
+                    <td className="p-4">
+                      <span>{event.title_ar}</span>
+                      {event.status === "draft" && (
+                        <div className="mt-2 flex flex-wrap gap-3 text-xs font-bold text-[#ed8b52]">
+                          {canEdit && <Link href={`/admin/events/${encodeURIComponent(event.id)}/edit`}>تعديل المسودة</Link>}
+                          <Link href={`/admin/events/${encodeURIComponent(event.id)}/preview`}>معاينة خاصة</Link>
+                        </div>
+                      )}
+                    </td>
                     <td className="p-4">{event.city}</td>
                     <td className="p-4">{event.status === "draft" ? "مسودة" : event.status === "published" ? "منشورة" : event.status}</td>
                     <td className="p-4">{event.start_at || "غير محدد"}</td>
