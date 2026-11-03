@@ -32,9 +32,13 @@ export async function generateMetadata({
     };
   }
 
-  const description =
-    event.descriptionAr ??
-    `اكتشف تفاصيل ${event.titleAr} في جدة واحجز عبر المنصة الرسمية.`;
+  const description = event.status === "cancelled"
+    ? `تم إلغاء فعالية ${event.titleAr} في جدة، والحجز غير متاح.`
+    : event.status === "ended"
+      ? `انتهت فعالية ${event.titleAr} في جدة، والحجز مغلق.`
+      : event.status === "sold_out"
+        ? `نفدت تذاكر فعالية ${event.titleAr} في جدة حاليًا.`
+        : event.descriptionAr ?? `اكتشف تفاصيل ${event.titleAr} في جدة واحجز عبر المنصة الرسمية.`;
 
   const image =
     event.coverImageUrl ?? event.imageUrl;
