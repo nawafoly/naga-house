@@ -3,18 +3,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { CuratedEventRepository } from "@/features/events/data";
 import {
   getEventCategoryLabel,
   isTrustedTicketUrl,
 } from "@/features/events/domain";
-import { EventService } from "@/features/events/services";
+import { getPublicEventService } from "@/features/events/server/public-event-service";
 
 export const instant = false;
+export const dynamic = "force-dynamic";
 
-const eventService = new EventService(
-  new CuratedEventRepository()
-);
 
 interface EventPageProps {
   params: Promise<{
@@ -28,7 +25,7 @@ export async function generateMetadata({
   const { slug } = await params;
 
   const event =
-    await eventService.getEventBySlug(slug);
+    await getPublicEventService().getEventBySlug(slug);
 
   if (!event) {
     return {
@@ -101,7 +98,7 @@ export default async function EventPage({
   const { slug } = await params;
 
   const event =
-    await eventService.getEventBySlug(slug);
+    await getPublicEventService().getEventBySlug(slug);
 
   if (!event) {
     notFound();
