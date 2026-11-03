@@ -1,4 +1,8 @@
-export type EventLifecycleStatus = "draft" | "published" | "sold_out" | "cancelled" | "ended";
+import type { EventStatus } from "../../events/domain/event";
+import { eventStatusLabels } from "../../events/domain/event-status";
+
+export { eventStatusLabels };
+export type EventLifecycleStatus = EventStatus;
 
 const allowed: Record<EventLifecycleStatus, readonly EventLifecycleStatus[]> = {
   draft: [],
@@ -6,14 +10,6 @@ const allowed: Record<EventLifecycleStatus, readonly EventLifecycleStatus[]> = {
   sold_out: ["published", "cancelled", "ended", "draft"],
   cancelled: ["draft"],
   ended: ["draft"],
-};
-
-export const eventStatusLabels: Record<EventLifecycleStatus, string> = {
-  draft: "مسودة",
-  published: "منشورة",
-  sold_out: "نفدت التذاكر",
-  cancelled: "ملغاة",
-  ended: "منتهية",
 };
 
 export function isEventLifecycleStatus(value: string): value is EventLifecycleStatus {
