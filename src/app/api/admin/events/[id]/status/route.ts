@@ -16,7 +16,7 @@ const statusCodes: Record<Exclude<TransitionResult, "updated">, number> = {
 
 function outcome(request: NextRequest, result: TransitionResult) {
   const ok = result === "updated";
-  const status = ok ? 200 : statusCodes[result];
+  const status = result === "updated" ? 200 : statusCodes[result];
   if (request.headers.get("accept")?.includes("application/json")) {
     return NextResponse.json({ ok, code: result }, {
       status, headers: { "Cache-Control": "no-store" },
