@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { parseDraftEventForm } from "../src/features/admin/domain/parse-draft-event.ts";
+import { MAX_DRAFT_FORM_BODY_BYTES, parseDraftEventForm } from "../src/features/admin/domain/parse-draft-event.ts";
 
 function makeForm(overrides = {}) {
   const fields = {
@@ -57,4 +57,19 @@ test("rejects negative, excessive, nonnumeric price and overly long text", () =>
     { amountFrom: "50.123" },
     { titleAr: "a".repeat(161) },
   ]) assert.equal(parseDraftEventForm(makeForm(changes)), null);
+});
+
+// Browsers submit URL-encoded form bodies; Arabic text expands under percent-encoding.
+test("maximum valid Arabic description fits the draft POST request size limit", () => {
+  const form = makeForm({
+    descriptionAr: "م".repeat(5000),
+    titleAr: "ح".repeat(160),
+    venue: "ج".repeat(160),
+    scheduleLabel: "ق".repeat(160),
+  });
+  assert.ok(parseDraftEventForm(form));
+  const encoded = new URLSearchParams(form).toString();
+  const bytes = Buffer.byteLength(encoded, "utf8");
+  assert.ok(bytes > 20_000, "the old cap rejected valid Arabic descriptions");
+  assert.ok(bytes <= MAX_DRAFT_FORM_BODY_BYTES, "a valid form must not exceed the POST cap");
 });
