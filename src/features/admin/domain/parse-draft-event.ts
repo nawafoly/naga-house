@@ -33,7 +33,7 @@ function read(form: FormData, key: DraftField, limit: number): string | null {
   return typeof value === "string" && value.length <= limit ? value.trim() : null;
 }
 
-function safeImageUrl(raw: string): boolean {
+export function isTrustedUnsplashImageUrl(raw: string): boolean {
   if (!raw || raw.length > 2048) return false;
   try {
     const url = new URL(raw);
@@ -75,7 +75,7 @@ export function validateDraftEventForm(form: FormData): DraftEventValidation {
   if (descriptionAr === null) errors.descriptionAr = "الوصف طويل جدًا (الحد 5000 حرف).";
   if (!category || !CATEGORIES.has(category)) errors.category = "اختر تصنيفًا صحيحًا.";
   if (!venue) errors.venue = "أدخل موقعًا داخل جدة.";
-  if (!imageUrl || !safeImageUrl(imageUrl)) {
+  if (!imageUrl || !isTrustedUnsplashImageUrl(imageUrl)) {
     errors.imageUrl = "الرابط يجب أن يبدأ بـ https://images.unsplash.com/ ومن دون اسم مستخدم أو منفذ.";
   }
   if (!provider || !PROVIDERS.has(provider)) errors.ticketProvider = "اختر منصة التذاكر من القائمة.";
