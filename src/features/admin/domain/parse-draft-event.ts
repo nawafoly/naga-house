@@ -1,4 +1,6 @@
 /** Parse and validate a D1-only draft. Never create a published event here. */
+// URLSearchParams percent-encodes Arabic text; 20 KB would reject valid 5000-character descriptions.
+export const MAX_DRAFT_FORM_BODY_BYTES = 64 * 1024;
 export interface DraftEventInput {
   slug: string;
   titleAr: string;
