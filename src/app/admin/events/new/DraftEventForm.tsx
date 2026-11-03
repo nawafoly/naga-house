@@ -13,12 +13,15 @@ function FieldError({ field, errors }: { field: string; errors: FieldErrors }) {
 }
 
 /** Client-side enhancement: server still verifies all permissions and all form fields. */
-export function DraftEventForm({ eventId, version, initialValues }: {
+export function DraftEventForm({ eventId, version, initialValues, liveStatus }: {
   eventId?: string;
   version?: string;
   initialValues?: Record<string, string>;
+  liveStatus?: "published" | "sold_out";
 }) {
-  const endpoint = eventId ? `/api/admin/events/${encodeURIComponent(eventId)}/edit` : "/api/admin/events";
+  const endpoint = eventId && liveStatus
+    ? `/api/admin/events/${encodeURIComponent(eventId)}/live-edit`
+    : eventId ? `/api/admin/events/${encodeURIComponent(eventId)}/edit` : "/api/admin/events";
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [summary, setSummary] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -73,6 +76,10 @@ export function DraftEventForm({ eventId, version, initialValues }: {
   return (
         <form method="post" action={endpoint} onSubmit={(event) => { void handleSubmit(event); }} className="grid gap-6 rounded-2xl border border-[#69816e] bg-[#324b36] p-6 sm:p-8">
           {eventId && <input type="hidden" name="version" value={version ?? ""} />}
+          {liveStatus && <div role="note" className="rounded-lg border border-[#ed8b52] bg-[#613c32] p-4 text-sm">تنبيه: تحفظ التعديلات على الفعالية العامة مباشرة. لا تتغير حالتها أو رابطها.</div>}
+          {liveStatus && <label className={labelClass}>اكتب المعرّف للتأكيد: <span dir="ltr">{initialValues?.slug}</span>
+            <input className={inputClass} name="confirmSlug" autoComplete="off" required dir="ltr" maxLength={120} pattern="[a-z0-9]+(-[a-z0-9]+)*" />
+          </label>}
           {summary && <div role="alert" aria-live="assertive" className="rounded-xl border border-[#ed8b52] bg-[#613c32] p-4 text-sm">{summary}</div>}
           <div className="grid gap-5 sm:grid-cols-2">
             <label className={labelClass}>اسم الفعالية بالعربية *
@@ -144,7 +151,7 @@ export function DraftEventForm({ eventId, version, initialValues }: {
 <FieldError field="imageUrl" errors={fieldErrors} />
           </label>
           <div className="flex flex-wrap gap-4">
-            <button type="submit" disabled={submitting} className="rounded-lg bg-[#ed8b52] px-6 py-3 font-bold text-[#222222]">{submitting ? "جارٍ الحفظ..." : (eventId ? "حفظ التعديلات" : "حفظ كمسودة")}</button>
+            <button type="submit" disabled={submitting} className="rounded-lg bg-[#ed8b52] px-6 py-3 font-bold text-[#222222]">{submitting ? "جارٍ الحفظ..." : (liveStatus ? "حفظ تحديث الفعالية المنشورة" : eventId ? "حفظ التعديلات" : "حفظ كمسودة")}</button>
             <Link href="/admin/events" className="rounded-lg border border-[#69816e] px-6 py-3">إلغاء</Link>
           </div>
         </form>
