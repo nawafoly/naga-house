@@ -1,5 +1,5 @@
 import type { EventStatus } from "../../events/domain/event";
-import { eventStatusLabels } from "../../events/domain/event-status";
+import { eventStatusLabels } from "../../events/domain/event-status.ts";
 
 export { eventStatusLabels };
 export type EventLifecycleStatus = EventStatus;
