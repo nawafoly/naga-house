@@ -30,7 +30,7 @@ function setup() {
       'music', 'jeddah', 'قاعة', 'قريباً', 'webook',
       'https://webook.com/ar/sa/experiences/sample', ?, ?)`);
   for (const [status, id] of Object.entries(ids)) {
-    insert.run(id, status + "-event", status === "deleted" ? "published" : status,
+    insert.run(id, status.replaceAll("_", "-") + "-event", status === "deleted" ? "published" : status,
       status === "deleted" ? "2026-11-01T00:00:00Z" : null);
   }
 
@@ -103,12 +103,12 @@ test("sold-out can reactivate only with a verified ticket and image", async () =
     const before = version("sold_out");
     const reject = { ticket: () => false, image: validators.image };
     assert.equal(await transitionEventStatus(
-      db, actor, ids.sold_out, before, "sold_out-event", "published", reject,
+      db, actor, ids.sold_out, before, "sold-out-event", "published", reject,
     ), "invalid");
     assert.equal(state("sold_out"), "sold_out");
     assert.equal(audit(ids.sold_out).length, 0);
     assert.equal(await transitionEventStatus(
-      db, actor, ids.sold_out, before, "sold_out-event", "published", validators,
+      db, actor, ids.sold_out, before, "sold-out-event", "published", validators,
     ), "updated");
     assert.equal(state("sold_out"), "published");
   } finally { sqlite.close(); }
