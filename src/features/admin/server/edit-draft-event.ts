@@ -32,6 +32,15 @@ type DraftRow = {
 
 export type EditDraftResult = "updated" | "not_found" | "conflict" | "invalid";
 
+/** The optimistic-lock version must advance even if two writes share a millisecond. */
+export function nextDraftEditVersion(previous: string, proposed: string): string {
+  const previousMs = Date.parse(previous);
+  const proposedMs = Date.parse(proposed);
+  return Number.isFinite(previousMs) && Number.isFinite(proposedMs) && proposedMs <= previousMs
+    ? new Date(previousMs + 1).toISOString()
+    : proposed;
+}
+
 /** Only drafts are editable. The slug is immutable to preserve existing links. */
 export async function editDraftEvent(
   db: EditDraftDatabase,
@@ -57,7 +66,7 @@ export async function editDraftEvent(
 
   const before = JSON.stringify(row);
   const after = JSON.stringify({ ...input, status: "draft" });
-  const now = new Date().toISOString();
+  const now = nextDraftEditVersion(row.updated_at, new Date().toISOString());
 
   // D1 batch executes in one transaction. Both statements use the same
   // draft/version guard so a stale or concurrently published row cannot be edited.
