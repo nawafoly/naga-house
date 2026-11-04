@@ -3,9 +3,16 @@ import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import test from "node:test";
 
-import { editDraftEvent } from "../src/features/admin/server/edit-draft-event.ts";
+import { editDraftEvent, nextDraftEditVersion } from "../src/features/admin/server/edit-draft-event.ts";
 
 const migration = readFileSync(new URL("../migrations/0001_admin_foundation.sql", import.meta.url), "utf8");
+
+test("draft edit versions advance within the same millisecond or after clock skew", () => {
+  const previous = "2026-11-04T11:16:08.070Z";
+  assert.equal(nextDraftEditVersion(previous, previous), "2026-11-04T11:16:08.071Z");
+  assert.equal(nextDraftEditVersion(previous, "2026-11-04T11:16:08.069Z"), "2026-11-04T11:16:08.071Z");
+  assert.equal(nextDraftEditVersion(previous, "2026-11-04T11:16:08.072Z"), "2026-11-04T11:16:08.072Z");
+});
 
 function setup() {
   const sqlite = new DatabaseSync(":memory:");
