@@ -10,6 +10,7 @@ test("missing public pages use a localized Arabic 404 with safe navigation", () 
   assert.match(notFound, /الصفحة غير موجودة/);
   assert.match(notFound, /غير متاحة للعرض حاليًا/);
   assert.match(notFound, /robots:\s*\{\s*index:\s*false/);
+  assert.match(notFound, /<nav aria-label="روابط التنقل"/);
   assert.match(notFound, /href="\/events"/);
   assert.match(notFound, /href="\/"/);
 });
