@@ -35,6 +35,8 @@ export default async function EventsPage({
     }),
     eventService.getPublishedCategories(),
   ]);
+  const hasPublishedEvents = categories.length > 0;
+  const hasActiveFilters = Boolean(search || category);
 
   function getCategoryHref(nextCategory: string) {
     const query = new URLSearchParams();
@@ -82,7 +84,11 @@ export default async function EventsPage({
             </Link>
           </div>
           <div className="relative z-40 mt-10 max-w-4xl">
-            <EventLiveSearch />
+            <EventLiveSearch
+              key={`${search}:${category}`}
+              initialQuery={search}
+              category={category}
+            />
           </div>
         </div>
       </section>
@@ -124,7 +130,7 @@ export default async function EventsPage({
           </div>
         </div>
 
-        {(search || category) && (
+        {hasActiveFilters && (
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
             <p className="font-medium text-brand-ink/75">
               عدد النتائج: <span className="font-extrabold text-brand-green">{events.length}</span>
@@ -151,16 +157,24 @@ export default async function EventsPage({
         ) : (
           <div className="rounded-[30px] border border-brand-green/15 bg-[#fffaf0] px-6 py-20 text-center">
             <h2 className="text-3xl font-extrabold text-brand-green sm:text-4xl">
-              ما لقينا فعاليات مطابقة
+              {!hasPublishedEvents
+                ? "فعاليات جدة قريبًا"
+                : hasActiveFilters
+                  ? "ما لقينا فعاليات مطابقة"
+                  : "لا توجد فعاليات في جدة حاليًا"}
             </h2>
             <p className="mt-5 text-lg text-brand-ink/70">
-              جرّب كلمة بحث مختلفة أو اختر تصنيفًا آخر.
+              {!hasPublishedEvents
+                ? "نعمل على إضافة فعاليات جديدة. ستظهر هنا فور نشرها رسميًا."
+                : hasActiveFilters
+                  ? "جرّب كلمة بحث مختلفة أو اختر تصنيفًا آخر."
+                  : "ستظهر هنا الفعاليات الجديدة بمجرد توفرها."}
             </p>
             <Link
-              href="/events"
+              href={hasActiveFilters && hasPublishedEvents ? "/events" : "/"}
               className="mt-8 inline-flex rounded-full bg-brand-orange px-7 py-3.5 font-bold text-brand-ink transition hover:bg-brand-green hover:text-brand-cream"
             >
-              عرض كل الفعاليات
+              {hasActiveFilters && hasPublishedEvents ? "مسح الفلاتر" : "العودة للرئيسية"}
             </Link>
           </div>
         )}

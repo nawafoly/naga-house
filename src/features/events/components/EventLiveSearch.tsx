@@ -26,8 +26,16 @@ interface SearchResult {
   events: SearchEvent[];
 }
 
-export function EventLiveSearch() {
-  const [query, setQuery] = useState("");
+interface EventLiveSearchProps {
+  initialQuery?: string;
+  category?: string;
+}
+
+export function EventLiveSearch({
+  initialQuery = "",
+  category = "",
+}: EventLiveSearchProps) {
+  const [query, setQuery] = useState(initialQuery);
   const [result, setResult] = useState<SearchResult>({
     query: "",
     events: [],
@@ -91,7 +99,8 @@ export function EventLiveSearch() {
 
   return (
     <div className="relative w-full max-w-4xl">
-      <div className="relative">
+      <form role="search" action="/events" method="get" className="relative">
+        {category && <input type="hidden" name="category" value={category} />}
         <svg
           aria-hidden="true"
           viewBox="0 0 24 24"
@@ -106,6 +115,7 @@ export function EventLiveSearch() {
 
         <input
           type="search"
+          name="search"
           aria-label="ابحث في فعاليات جدة"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
@@ -117,9 +127,15 @@ export function EventLiveSearch() {
           }}
           placeholder="ابحث عن مسرحية، حفلة، تجربة..."
           autoComplete="off"
-          className="h-[72px] w-full rounded-[24px] border border-brand-cream/90 bg-brand-cream px-5 pr-16 text-base font-semibold text-brand-ink shadow-[0_12px_32px_rgba(0,0,0,0.14)] outline-none transition placeholder:font-medium placeholder:text-brand-ink/60 hover:bg-white focus:border-brand-orange focus:bg-white focus:ring-4 focus:ring-brand-orange/35 sm:h-20 sm:text-lg"
+          className="h-[72px] w-full rounded-[24px] border border-brand-cream/90 bg-brand-cream px-5 pl-28 pr-16 text-base font-semibold text-brand-ink shadow-[0_12px_32px_rgba(0,0,0,0.14)] outline-none transition placeholder:font-medium placeholder:text-brand-ink/60 hover:bg-white focus:border-brand-orange focus:bg-white focus:ring-4 focus:ring-brand-orange/35 sm:h-20 sm:text-lg"
         />
-      </div>
+        <button
+          type="submit"
+          className="absolute left-3 top-1/2 -translate-y-1/2 rounded-2xl bg-brand-green px-5 py-3 text-sm font-extrabold text-brand-cream transition hover:bg-brand-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-orange sm:left-4 sm:text-base"
+        >
+          بحث
+        </button>
+      </form>
 
       {showPanel && (
         <div className="absolute inset-x-0 top-[calc(100%+10px)] z-50 overflow-hidden rounded-[24px] border border-brand-cream/20 bg-brand-ink/98 text-brand-cream shadow-2xl backdrop-blur-2xl sm:rounded-[28px]">
