@@ -15,14 +15,14 @@ export default function NotFound() {
         <p className="mx-auto mb-9 max-w-xl leading-8 text-[#f8eedb]/75">
           قد يكون الرابط غير صحيح، أو أن الفعالية غير متاحة للعرض حاليًا.
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-4">
+        <nav aria-label="روابط التنقل" className="flex flex-wrap items-center justify-center gap-4">
           <Link href="/events" className="rounded-xl bg-[#ed8b52] px-6 py-3 font-bold text-[#222222]">
             استعرض الفعاليات
           </Link>
           <Link href="/" className="rounded-xl border border-[#69816e] px-6 py-3 font-bold">
             العودة للرئيسية
           </Link>
-        </div>
+        </nav>
       </section>
     </main>
   );
