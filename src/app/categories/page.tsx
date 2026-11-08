@@ -1,12 +1,13 @@
 import Link from "next/link";
 
-import { eventCategoryLabels } from "@/features/events/domain";
+import { eventCategoryKeys, eventCategoryLabels } from "@/features/events/domain";
 import { getPublicEventService } from "@/features/events/server/public-event-service";
 
 export const dynamic = "force-dynamic";
 
 const categoryDescriptions: Record<string, string> = {
   music: "حفلات، موسيقى، دي جي وتجارب موسيقية مباشرة.",
+  comedy: "عروض ستاند أب كوميدي وأمسيات ضحك مباشرة.",
   theater: "مسرحيات وعروض حية وتجارب فنية.",
   sports: "مباريات، بطولات وتجارب رياضية.",
   family: "فعاليات وتجارب مناسبة للعائلة والأطفال.",
@@ -14,17 +15,11 @@ const categoryDescriptions: Record<string, string> = {
   entertainment: "ألعاب وتجارب وأنشطة ترفيهية متنوعة.",
 };
 
-const categoryOrder = [
-  "music",
-  "theater",
-  "sports",
-  "family",
-  "dining",
-  "entertainment",
-];
+const categoryOrder: readonly string[] = eventCategoryKeys;
 
 const categoryAccents: Record<string, string> = {
   music: "bg-brand-orange",
+  comedy: "bg-brand-copper",
   theater: "bg-brand-brick",
   sports: "bg-brand-blue",
   family: "bg-brand-green",

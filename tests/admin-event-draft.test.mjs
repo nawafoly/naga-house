@@ -36,6 +36,11 @@ test("a date-free event requires a schedule label", () => {
   assert.ok(parseDraftEventForm(makeForm({ startAt: "", scheduleLabel: "الموعد يعلن لاحقًا" })));
 });
 
+test("comedy is an accepted category for stand-up events", () => {
+  const parsed = parseDraftEventForm(makeForm({ category: "comedy" }));
+  assert.equal(parsed?.category, "comedy");
+});
+
 test("rejects invalid date, slug, disallowed image hosts, categories, and providers", () => {
   for (const changes of [
     { startAt: "2026-02-30T19:30" },

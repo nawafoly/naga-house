@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { hasAdminPermission } from "@/features/admin/domain/permissions";
 import { allowedNextEventStatuses, eventStatusLabels, isEventLifecycleStatus } from "@/features/admin/domain/event-lifecycle";
+import { getAdminEventSchedule } from "@/features/admin/domain/event-schedule";
 import { getAdminDb, getCurrentAdmin } from "@/features/admin/server/auth";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +20,7 @@ type AdminEvent = {
   status: string;
   city: string;
   start_at: string | null;
+  schedule_label: string | null;
   updated_at: string;
 };
 
@@ -40,7 +42,7 @@ export default async function AdminEvents({
 
   let events: AdminEvent[];
   try {
-    const result = await getAdminDb().prepare(`SELECT id, slug, title_ar, status, city, start_at, updated_at
+    const result = await getAdminDb().prepare(`SELECT id, slug, title_ar, status, city, start_at, schedule_label, updated_at
       FROM events WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 100`)
       .all<AdminEvent>();
     events = result.results;
@@ -112,7 +114,7 @@ export default async function AdminEvents({
                   <th className="p-4">الفعالية</th>
                   <th className="p-4">المدينة</th>
                   <th className="p-4">الحالة</th>
-                  <th className="p-4">البداية</th>
+                  <th className="p-4">الموعد</th>
                   {canPublish && <th className="p-4">النشر وإدارة الحالة</th>}
                 </tr>
               </thead>
@@ -135,7 +137,7 @@ export default async function AdminEvents({
                     </td>
                     <td className="p-4">{event.city}</td>
                     <td className="p-4">{isEventLifecycleStatus(event.status) ? eventStatusLabels[event.status] : event.status}</td>
-                    <td className="p-4">{event.start_at || "غير محدد"}</td>
+                    <td className="p-4">{getAdminEventSchedule(event.start_at, event.schedule_label)}</td>
                     {canPublish && (
                       <td className="p-4">
                         {event.status === "draft" ? (

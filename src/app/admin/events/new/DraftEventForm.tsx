@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { eventCategoryKeys, eventCategoryLabels } from "@/features/events/domain/event-category";
 
 type FieldErrors = Record<string, string>;
 
@@ -102,12 +103,9 @@ export function DraftEventForm({ eventId, version, initialValues, liveStatus }: 
           <div className="grid gap-5 sm:grid-cols-2">
             <label className={labelClass}>التصنيف *
               <select className={inputClass} name="category" defaultValue={initialValues?.category ?? "music"} required>
-                <option value="music">موسيقى</option>
-                <option value="theater">مسرح</option>
-                <option value="sports">رياضة</option>
-                <option value="family">عائلة</option>
-                <option value="dining">مطاعم وتجارب</option>
-                <option value="entertainment">ترفيه</option>
+                {eventCategoryKeys.map((category) => (
+                  <option key={category} value={category}>{eventCategoryLabels[category]}</option>
+                ))}
               </select>
 <FieldError field="category" errors={fieldErrors} />
             </label>
