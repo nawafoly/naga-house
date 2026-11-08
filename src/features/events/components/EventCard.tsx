@@ -10,6 +10,7 @@ import {
 interface EventCardProps {
   event: Event;
   eager?: boolean;
+  preview?: boolean;
 }
 
 function formatEventDate(value: string) {
@@ -21,7 +22,7 @@ function formatEventDate(value: string) {
   }).format(new Date(value));
 }
 
-export function EventCard({ event, eager = false }: EventCardProps) {
+export function EventCard({ event, eager = false, preview = false }: EventCardProps) {
   const price =
     event.price.amountFrom !== undefined
       ? `يبدأ من ${event.price.amountFrom} ر.س`
@@ -46,13 +47,18 @@ export function EventCard({ event, eager = false }: EventCardProps) {
 
         <div className="absolute inset-0 bg-gradient-to-t from-[#18261b]/95 via-[#18261b]/20 to-[#18261b]/10" />
 
-        <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-5">
+        <div className="absolute inset-x-0 top-0 flex flex-wrap items-start justify-between gap-3 p-5">
           <span className="rounded-full border border-brand-cream/30 bg-brand-green/90 px-4 py-2 text-sm font-bold text-brand-cream backdrop-blur-md">
             {getEventCategoryLabel(event.category)}
           </span>
           {event.featured && (
             <span className="rounded-full bg-brand-orange px-4 py-2 text-sm font-extrabold text-brand-ink">
               مميز
+            </span>
+          )}
+          {preview && (
+            <span className="rounded-full border border-brand-cream/40 bg-brand-ink/85 px-4 py-2 text-sm font-bold text-brand-cream">
+              مسودة غير منشورة
             </span>
           )}
           {event.status === "sold_out" && (
@@ -97,13 +103,19 @@ export function EventCard({ event, eager = false }: EventCardProps) {
         )}
 
         <div className="mt-auto border-t border-brand-green/15 pt-5 [margin-top:1.5rem]">
-          <Link
-            href={`/events/${event.slug}`}
-            className="flex h-12 w-full items-center justify-between rounded-full bg-brand-green px-5 font-bold text-brand-cream transition hover:bg-brand-copper focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-copper"
-          >
-            <span>عرض التفاصيل</span>
-            <span className="text-xl" aria-hidden="true">←</span>
-          </Link>
+          {preview ? (
+            <div className="flex h-12 w-full items-center justify-center rounded-full border border-brand-green/30 bg-brand-green/10 px-5 text-sm font-bold text-brand-green">
+              معاينة البطاقة فقط — غير منشورة
+            </div>
+          ) : (
+            <Link
+              href={`/events/${event.slug}`}
+              className="flex h-12 w-full items-center justify-between rounded-full bg-brand-green px-5 font-bold text-brand-cream transition hover:bg-brand-copper focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-copper"
+            >
+              <span>عرض التفاصيل</span>
+              <span className="text-xl" aria-hidden="true">←</span>
+            </Link>
+          )}
         </div>
       </div>
     </article>
