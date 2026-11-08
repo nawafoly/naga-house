@@ -54,7 +54,7 @@ export default async function CategoriesPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-brand-cream text-brand-ink">
+    <main className="min-h-screen bg-brand-ink text-brand-cream">
       <section className="naga-hero relative isolate z-10 overflow-hidden border-b border-brand-cream/15 text-brand-cream">
         <div
           aria-hidden="true"
@@ -83,66 +83,68 @@ export default async function CategoriesPage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-[1600px] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-        <div className="mb-8 flex items-center justify-between gap-4">
-          <h2 className="text-2xl font-extrabold text-brand-green sm:text-3xl">
-            اختر عالمك
-          </h2>
-          <span className="rounded-full bg-brand-green/10 px-4 py-2 text-sm font-bold text-brand-green">
-            {availableCategories.length} تصنيفات
-          </span>
+      <section className="naga-public-content px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+        <div className="mx-auto w-full max-w-[1600px]">
+          <div className="mb-8 flex items-center justify-between gap-4">
+            <h2 className="text-2xl font-extrabold text-brand-cream sm:text-3xl">
+              اختر عالمك
+            </h2>
+            <span className="rounded-full bg-brand-cream/10 px-4 py-2 text-sm font-bold text-brand-cream">
+              {availableCategories.length} تصنيفات
+            </span>
+          </div>
+
+          {availableCategories.length > 0 ? (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {availableCategories.map((category, index) => {
+                const count = categoryCounts[category] ?? 0;
+                const accent = categoryAccents[category] ?? "bg-brand-blue";
+
+                return (
+                  <Link
+                    key={category}
+                    href={`/events?category=${encodeURIComponent(category)}`}
+                    className="group relative flex min-h-[300px] flex-col overflow-hidden rounded-[30px] border border-brand-green/15 bg-[#fffaf0] p-7 shadow-[0_14px_35px_rgba(34,34,34,0.07)] transition duration-300 hover:-translate-y-1 hover:border-brand-green/40 hover:shadow-[0_22px_45px_rgba(34,34,34,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-copper sm:p-8"
+                  >
+                    <div className={`absolute inset-x-0 top-0 h-2 ${accent}`} aria-hidden="true" />
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="naga-latin text-sm font-bold tracking-[0.25em] text-brand-copper">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <span className="rounded-full border border-brand-green/15 bg-brand-green/10 px-3 py-1.5 text-xs font-bold text-brand-green">
+                        {count} {count === 1 ? "فعالية" : "فعاليات"}
+                      </span>
+                    </div>
+
+                    <div className="mt-10 flex-1">
+                      <h3 className="text-4xl font-extrabold text-brand-green sm:text-5xl">
+                        {eventCategoryLabels[category] ?? category}
+                      </h3>
+                      <p className="mt-5 max-w-sm text-base leading-8 text-brand-ink/75">
+                        {categoryDescriptions[category] ??
+                          "استعرض الفعاليات المتوفرة ضمن هذا التصنيف."}
+                      </p>
+                    </div>
+
+                    <div className="mt-9 flex items-center justify-between border-t border-brand-green/15 pt-5">
+                      <span className="font-bold text-brand-copper">استعرض الفعاليات</span>
+                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-orange text-xl text-brand-ink transition duration-300 group-hover:-translate-x-1 group-hover:bg-brand-green group-hover:text-brand-cream" aria-hidden="true">
+                        ←
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="rounded-[30px] border border-brand-green/20 bg-[#fffaf0] px-6 py-20 text-center">
+              <h2 className="text-3xl font-extrabold text-brand-green">لا توجد تصنيفات متاحة حاليًا</h2>
+              <p className="mt-4 text-base text-brand-ink/70">
+                ستظهر التصنيفات تلقائيًا عند إضافة فعاليات جديدة.
+              </p>
+            </div>
+          )}
         </div>
-
-        {availableCategories.length > 0 ? (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {availableCategories.map((category, index) => {
-              const count = categoryCounts[category] ?? 0;
-              const accent = categoryAccents[category] ?? "bg-brand-blue";
-
-              return (
-                <Link
-                  key={category}
-                  href={`/events?category=${encodeURIComponent(category)}`}
-                  className="group relative flex min-h-[300px] flex-col overflow-hidden rounded-[30px] border border-brand-green/15 bg-[#fffaf0] p-7 shadow-[0_14px_35px_rgba(34,34,34,0.07)] transition duration-300 hover:-translate-y-1 hover:border-brand-green/40 hover:shadow-[0_22px_45px_rgba(34,34,34,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-copper sm:p-8"
-                >
-                  <div className={`absolute inset-x-0 top-0 h-2 ${accent}`} aria-hidden="true" />
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="naga-latin text-sm font-bold tracking-[0.25em] text-brand-copper">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span className="rounded-full border border-brand-green/15 bg-brand-green/10 px-3 py-1.5 text-xs font-bold text-brand-green">
-                      {count} {count === 1 ? "فعالية" : "فعاليات"}
-                    </span>
-                  </div>
-
-                  <div className="mt-10 flex-1">
-                    <h3 className="text-4xl font-extrabold text-brand-green sm:text-5xl">
-                      {eventCategoryLabels[category] ?? category}
-                    </h3>
-                    <p className="mt-5 max-w-sm text-base leading-8 text-brand-ink/75">
-                      {categoryDescriptions[category] ??
-                        "استعرض الفعاليات المتوفرة ضمن هذا التصنيف."}
-                    </p>
-                  </div>
-
-                  <div className="mt-9 flex items-center justify-between border-t border-brand-green/15 pt-5">
-                    <span className="font-bold text-brand-copper">استعرض الفعاليات</span>
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-orange text-xl text-brand-ink transition duration-300 group-hover:-translate-x-1 group-hover:bg-brand-green group-hover:text-brand-cream" aria-hidden="true">
-                      ←
-                    </span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="rounded-[30px] border border-brand-green/20 bg-white/60 px-6 py-20 text-center">
-            <h2 className="text-3xl font-extrabold text-brand-green">لا توجد تصنيفات متاحة حاليًا</h2>
-            <p className="mt-4 text-base text-brand-ink/70">
-              ستظهر التصنيفات تلقائيًا عند إضافة فعاليات جديدة.
-            </p>
-          </div>
-        )}
       </section>
     </main>
   );
