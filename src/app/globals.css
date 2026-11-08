@@ -59,8 +59,8 @@ body {
   pointer-events: none;
 }
 
-/* A softer visual hand-off from the green hero to the events section. */
-.naga-home-featured {
+/* Shared hand-off from every public green hero to dark event content. */
+.naga-public-content {
   background: linear-gradient(
     180deg,
     #2d4233 0,
@@ -71,7 +71,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .naga-hero *,
-  .naga-home-featured * {
+  .naga-public-content * {
     scroll-behavior: auto;
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;

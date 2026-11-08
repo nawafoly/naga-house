@@ -57,7 +57,7 @@ export default async function EventsPage({
   }
 
   return (
-    <main className="min-h-screen bg-brand-cream text-brand-ink">
+    <main className="min-h-screen bg-brand-ink text-brand-cream">
       <section className="naga-hero relative isolate z-10 overflow-visible border-b border-brand-cream/15 text-brand-cream">
         <div
           aria-hidden="true"
@@ -93,91 +93,93 @@ export default async function EventsPage({
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-[1600px] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
-        <div className="mb-11 rounded-[28px] border border-brand-green/15 bg-[#fffaf0] p-5 shadow-[0_10px_30px_rgba(34,34,34,0.06)] sm:p-6">
-          <p className="mb-4 text-sm font-bold text-brand-green">
-            تصفية حسب التصنيف
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href={getCategoryHref("")}
-              aria-current={!category ? "page" : undefined}
-              className={`rounded-full border px-5 py-2.5 text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-copper sm:text-base ${
-                !category
-                  ? "border-brand-green bg-brand-green text-brand-cream"
-                  : "border-brand-green/20 bg-brand-cream text-brand-green hover:border-brand-copper hover:bg-brand-orange/15"
-              }`}
-            >
-              الكل
-            </Link>
-            {categories.map((item) => {
-              const isActive = category === item;
-              return (
-                <Link
-                  key={item}
-                  href={getCategoryHref(item)}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`rounded-full border px-5 py-2.5 text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-copper sm:text-base ${
-                    isActive
-                      ? "border-brand-green bg-brand-green text-brand-cream"
-                      : "border-brand-green/20 bg-brand-cream text-brand-green hover:border-brand-copper hover:bg-brand-orange/15"
-                  }`}
-                >
-                  {getEventCategoryLabel(item)}
-                </Link>
-              );
-            })}
+      <section className="naga-public-content px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+        <div className="mx-auto w-full max-w-[1600px]">
+          <div className="mb-11 rounded-[28px] border border-brand-green/15 bg-[#fffaf0] p-5 shadow-[0_10px_30px_rgba(34,34,34,0.06)] sm:p-6">
+            <p className="mb-4 text-sm font-bold text-brand-green">
+              تصفية حسب التصنيف
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href={getCategoryHref("")}
+                aria-current={!category ? "page" : undefined}
+                className={`rounded-full border px-5 py-2.5 text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-copper sm:text-base ${
+                  !category
+                    ? "border-brand-green bg-brand-green text-brand-cream"
+                    : "border-brand-green/20 bg-brand-cream text-brand-green hover:border-brand-copper hover:bg-brand-orange/15"
+                }`}
+              >
+                الكل
+              </Link>
+              {categories.map((item) => {
+                const isActive = category === item;
+                return (
+                  <Link
+                    key={item}
+                    href={getCategoryHref(item)}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`rounded-full border px-5 py-2.5 text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-copper sm:text-base ${
+                      isActive
+                        ? "border-brand-green bg-brand-green text-brand-cream"
+                        : "border-brand-green/20 bg-brand-cream text-brand-green hover:border-brand-copper hover:bg-brand-orange/15"
+                    }`}
+                  >
+                    {getEventCategoryLabel(item)}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
+
+          {hasActiveFilters && (
+            <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+              <p className="font-medium text-brand-cream/80">
+                عدد النتائج: <span className="font-extrabold text-brand-orange">{events.length}</span>
+              </p>
+              <Link
+                href="/events"
+                className="rounded-full border border-brand-orange/50 px-5 py-2.5 font-bold text-brand-orange transition hover:bg-brand-orange/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-orange"
+              >
+                مسح الفلاتر
+              </Link>
+            </div>
+          )}
+
+          {events.length > 0 ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:gap-8">
+              {events.map((event, index) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  eager={index < 3}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-[30px] border border-brand-green/15 bg-[#fffaf0] px-6 py-20 text-center">
+              <h2 className="text-3xl font-extrabold text-brand-green sm:text-4xl">
+                {!hasPublishedEvents
+                  ? "فعاليات جدة قريبًا"
+                  : hasActiveFilters
+                    ? "ما لقينا فعاليات مطابقة"
+                    : "لا توجد فعاليات في جدة حاليًا"}
+              </h2>
+              <p className="mt-5 text-lg text-brand-ink/70">
+                {!hasPublishedEvents
+                  ? "نعمل على إضافة فعاليات جديدة. ستظهر هنا فور نشرها رسميًا."
+                  : hasActiveFilters
+                    ? "جرّب كلمة بحث مختلفة أو اختر تصنيفًا آخر."
+                    : "ستظهر هنا الفعاليات الجديدة بمجرد توفرها."}
+              </p>
+              <Link
+                href={hasActiveFilters && hasPublishedEvents ? "/events" : "/"}
+                className="mt-8 inline-flex rounded-full bg-brand-orange px-7 py-3.5 font-bold text-brand-ink transition hover:bg-brand-green hover:text-brand-cream"
+              >
+                {hasActiveFilters && hasPublishedEvents ? "مسح الفلاتر" : "العودة للرئيسية"}
+              </Link>
+            </div>
+          )}
         </div>
-
-        {hasActiveFilters && (
-          <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-            <p className="font-medium text-brand-ink/75">
-              عدد النتائج: <span className="font-extrabold text-brand-green">{events.length}</span>
-            </p>
-            <Link
-              href="/events"
-              className="rounded-full border border-brand-copper/30 px-5 py-2.5 font-bold text-brand-copper transition hover:bg-brand-orange/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-copper"
-            >
-              مسح الفلاتر
-            </Link>
-          </div>
-        )}
-
-        {events.length > 0 ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:gap-8">
-            {events.map((event, index) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                eager={index < 3}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-[30px] border border-brand-green/15 bg-[#fffaf0] px-6 py-20 text-center">
-            <h2 className="text-3xl font-extrabold text-brand-green sm:text-4xl">
-              {!hasPublishedEvents
-                ? "فعاليات جدة قريبًا"
-                : hasActiveFilters
-                  ? "ما لقينا فعاليات مطابقة"
-                  : "لا توجد فعاليات في جدة حاليًا"}
-            </h2>
-            <p className="mt-5 text-lg text-brand-ink/70">
-              {!hasPublishedEvents
-                ? "نعمل على إضافة فعاليات جديدة. ستظهر هنا فور نشرها رسميًا."
-                : hasActiveFilters
-                  ? "جرّب كلمة بحث مختلفة أو اختر تصنيفًا آخر."
-                  : "ستظهر هنا الفعاليات الجديدة بمجرد توفرها."}
-            </p>
-            <Link
-              href={hasActiveFilters && hasPublishedEvents ? "/events" : "/"}
-              className="mt-8 inline-flex rounded-full bg-brand-orange px-7 py-3.5 font-bold text-brand-ink transition hover:bg-brand-green hover:text-brand-cream"
-            >
-              {hasActiveFilters && hasPublishedEvents ? "مسح الفلاتر" : "العودة للرئيسية"}
-            </Link>
-          </div>
-        )}
       </section>
     </main>
   );

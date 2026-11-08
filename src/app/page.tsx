@@ -13,7 +13,7 @@ export default async function HomePage() {
     <main className="min-h-screen bg-brand-ink text-brand-cream">
       <HeroSection />
 
-      <section id="featured-events" className="naga-home-featured scroll-mt-24">
+      <section id="featured-events" className="naga-public-content scroll-mt-24">
         <div className="mx-auto w-full max-w-[1600px] px-4 pb-20 pt-24 sm:px-6 lg:px-8 lg:pb-28 lg:pt-28">
           <div className="mb-12 flex flex-col justify-between gap-8 lg:mb-16 lg:flex-row lg:items-end">
             <div>
