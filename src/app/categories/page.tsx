@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { eventCategoryKeys, eventCategoryLabels } from "@/features/events/domain";
+import { getPublicCardGridLayout } from "@/features/events/components/public-card-grid-layout";
 import { getPublicEventService } from "@/features/events/server/public-event-service";
 
 export const dynamic = "force-dynamic";
@@ -95,7 +96,7 @@ export default async function CategoriesPage() {
           </div>
 
           {availableCategories.length > 0 ? (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className={`grid w-full gap-5 ${getPublicCardGridLayout(availableCategories.length)}`}>
               {availableCategories.map((category, index) => {
                 const count = categoryCounts[category] ?? 0;
                 const accent = categoryAccents[category] ?? "bg-brand-blue";
