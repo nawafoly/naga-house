@@ -58,10 +58,10 @@ export default async function EventsPage({
 
   return (
     <main className="min-h-screen bg-brand-cream text-brand-ink">
-      <section className="relative isolate overflow-visible bg-brand-green text-brand-cream">
+      <section className="naga-hero relative isolate z-10 overflow-visible border-b border-brand-cream/15 text-brand-cream">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_85%,rgba(237,139,82,0.2),transparent_35%),radial-gradient(circle_at_85%_10%,rgba(34,93,126,0.32),transparent_34%)]"
+          className="naga-hero-lines pointer-events-none absolute inset-0 -z-10"
         />
         <div className="relative mx-auto w-full max-w-[1600px] px-4 pb-16 pt-14 sm:px-6 lg:px-8 lg:pb-20 lg:pt-20">
           <p className="naga-latin text-sm font-bold tracking-[0.36em] text-brand-orange sm:text-base">
