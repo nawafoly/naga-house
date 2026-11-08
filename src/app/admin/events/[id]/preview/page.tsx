@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { hasAdminPermission } from "@/features/admin/domain/permissions";
 import { getAdminDb, getCurrentAdmin } from "@/features/admin/server/auth";
+import { EventCard } from "@/features/events/components/EventCard";
 import { EventDetailsView } from "@/features/events/components/EventDetailsView";
 import type { Event, TicketProvider } from "@/features/events/domain";
 
@@ -82,6 +83,26 @@ export default async function PreviewAdminDraft({
           <Link href={`/admin/events/${encodeURIComponent(id)}/edit`} className="rounded-lg border border-[#ed8b52] px-5 py-2 font-bold">
             العودة إلى تعديل المسودة
           </Link>
+        </div>
+      </section>
+      <section
+        dir="rtl"
+        aria-labelledby="draft-card-preview-heading"
+        className="bg-brand-cream px-5 py-12 text-brand-ink sm:py-16"
+      >
+        <div className="mx-auto w-full max-w-[1600px]">
+          <h2
+            id="draft-card-preview-heading"
+            className="text-3xl font-extrabold text-brand-green sm:text-4xl"
+          >
+            معاينة بطاقة الفعالية
+          </h2>
+          <p className="mt-3 max-w-2xl text-base leading-8 text-brand-ink/75">
+            هذا شكل البطاقة المتوقع عند عرض الفعالية للزوار بعد النشر. المسودة غير منشورة، والرابط العام غير مفعّل.
+          </p>
+          <div className="mt-8 w-full max-w-[420px]">
+            <EventCard event={event} eager preview />
+          </div>
         </div>
       </section>
       <EventDetailsView event={event} preview />
