@@ -1,4 +1,6 @@
 /** Parse and validate a D1-only draft. Never create a published event here. */
+import { eventCategoryKeys } from "../../events/domain/event-category.ts";
+
 // URLSearchParams percent-encodes Arabic text; 20 KB would reject valid 5000-character descriptions.
 export const MAX_DRAFT_FORM_BODY_BYTES = 64 * 1024;
 export interface DraftEventInput {
@@ -25,7 +27,7 @@ export type DraftEventValidation =
   | { value: DraftEventInput; errors: DraftFieldErrors }
   | { value: null; errors: DraftFieldErrors };
 
-const CATEGORIES = new Set(["music", "theater", "sports", "family", "dining", "entertainment"]);
+const CATEGORIES = new Set<string>(eventCategoryKeys);
 const PROVIDERS = new Set(["webook", "ticketmx", "platinumlist", "nofomo"]);
 
 /** Distinguish missing/empty from malformed or oversized form values. */
