@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { HeroSection } from "@/components/layout";
 import { EventCard } from "@/features/events/components";
+import { getPublicCardGridLayout } from "@/features/events/components/public-card-grid-layout";
 import { getPublicEventService } from "@/features/events/server/public-event-service";
 
 export const dynamic = "force-dynamic";
@@ -40,7 +41,7 @@ export default async function HomePage() {
           </div>
 
           {events.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:gap-8">
+            <div className={`grid w-full gap-6 xl:gap-8 ${getPublicCardGridLayout(events.length)}`}>
               {events.map((event, index) => (
                 <EventCard
                   key={event.id}
