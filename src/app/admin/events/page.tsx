@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { hasAdminPermission } from "@/features/admin/domain/permissions";
+import { getAdminCityLabel } from "@/features/admin/domain/event-city";
 import { allowedNextEventStatuses, eventStatusLabels, isEventLifecycleStatus } from "@/features/admin/domain/event-lifecycle";
 import { getAdminEventSchedule } from "@/features/admin/domain/event-schedule";
 import { getAdminDb, getCurrentAdmin } from "@/features/admin/server/auth";
@@ -135,7 +136,7 @@ export default async function AdminEvents({
                         </div>
                       )}
                     </td>
-                    <td className="p-4">{event.city}</td>
+                    <td className="p-4">{getAdminCityLabel(event.city)}</td>
                     <td className="p-4">{isEventLifecycleStatus(event.status) ? eventStatusLabels[event.status] : event.status}</td>
                     <td className="p-4">{getAdminEventSchedule(event.start_at, event.schedule_label)}</td>
                     {canPublish && (
