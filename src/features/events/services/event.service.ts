@@ -2,14 +2,31 @@
 import type { EventRepository } from "../data";
 
 export class EventService {
-  constructor(private readonly repository: EventRepository) {}
+  private readonly repository: EventRepository;
+
+  constructor(repository: EventRepository) {
+    this.repository = repository;
+  }
 
   getPublishedEvents(): Promise<Event[]> {
     return this.repository.getPublished();
   }
 
-  getFeaturedEvents(): Promise<Event[]> {
-    return this.repository.getFeatured();
+  async getFeaturedEvents(): Promise<Event[]> {
+    const isJeddahPublished = (event: Event) =>
+      event.status === "published" &&
+      event.location.city.trim().toLowerCase() === "jeddah";
+
+    const featured = (await this.repository.getFeatured()).filter(isJeddahPublished);
+    if (featured.length > 0) {
+      return featured;
+    }
+
+    // Admin-created events default to featured=0. Keep the homepage useful
+    // until a deliberate featured selection is available in the admin panel.
+    return (await this.repository.getPublished())
+      .filter(isJeddahPublished)
+      .slice(0, 3);
   }
 
   getEventBySlug(slug: string): Promise<Event | null> {
