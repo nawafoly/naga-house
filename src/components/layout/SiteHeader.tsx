@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { AdminHeaderLink } from "./AdminHeaderLink";
 
 const navigationItems = [
   { label: "الرئيسية", href: "/" },
@@ -43,12 +44,7 @@ export function SiteHeader() {
             جدة
           </span>
 
-          <Link
-            href="/admin/login"
-            className="hidden rounded-full bg-brand-orange px-5 py-2.5 text-sm font-bold text-brand-ink transition hover:bg-brand-cream focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-orange sm:inline-flex sm:text-base"
-          >
-            تسجيل الدخول
-          </Link>
+          <AdminHeaderLink />
         </div>
       </div>
 
@@ -65,12 +61,7 @@ export function SiteHeader() {
             {item.label}
           </Link>
         ))}
-        <Link
-          href="/admin/login"
-          className="rounded-full border border-brand-orange/60 px-2.5 py-2.5 text-sm font-semibold text-brand-orange transition hover:bg-brand-orange/15 focus-visible:outline-2 focus-visible:outline-brand-orange"
-        >
-          دخول
-        </Link>
+        <AdminHeaderLink mobile />
       </nav>
     </header>
   );
