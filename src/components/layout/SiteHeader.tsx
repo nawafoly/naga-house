@@ -44,10 +44,10 @@ export function SiteHeader() {
           </span>
 
           <Link
-            href="/events"
+            href="/admin/login"
             className="hidden rounded-full bg-brand-orange px-5 py-2.5 text-sm font-bold text-brand-ink transition hover:bg-brand-cream focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-orange sm:inline-flex sm:text-base"
           >
-            اكتشف الفعاليات
+            تسجيل الدخول
           </Link>
         </div>
       </div>
@@ -60,11 +60,17 @@ export function SiteHeader() {
           <Link
             key={item.href}
             href={item.href}
-            className="rounded-full px-4 py-2.5 text-sm font-semibold text-brand-cream/85 transition hover:bg-brand-orange/15 hover:text-brand-cream focus-visible:outline-2 focus-visible:outline-brand-orange"
+            className="rounded-full px-2 py-2.5 text-sm font-semibold text-brand-cream/85 transition hover:bg-brand-orange/15 hover:text-brand-cream focus-visible:outline-2 focus-visible:outline-brand-orange sm:px-4"
           >
             {item.label}
           </Link>
         ))}
+        <Link
+          href="/admin/login"
+          className="rounded-full border border-brand-orange/60 px-2.5 py-2.5 text-sm font-semibold text-brand-orange transition hover:bg-brand-orange/15 focus-visible:outline-2 focus-visible:outline-brand-orange"
+        >
+          دخول
+        </Link>
       </nav>
     </header>
   );
