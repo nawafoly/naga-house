@@ -8,8 +8,8 @@ export function adminEntryForPath(pathname: string | null, mobile: boolean) {
   const showDashboard = Boolean(isAdminRoute && pathname !== "/admin/login");
 
   return {
-    href: showDashboard ? "/admin" : "/admin/login",
-    label: showDashboard ? (mobile ? "لوحة" : "لوحة التحكم") : mobile ? "دخول" : "تسجيل الدخول",
-    ariaLabel: showDashboard ? "لوحة التحكم" : "تسجيل الدخول إلى الإدارة",
+    href: isAdminRoute ? (showDashboard ? "/admin" : "/admin/login") : "/login",
+    label: isAdminRoute ? (showDashboard ? (mobile ? "لوحة" : "لوحة التحكم") : mobile ? "دخول" : "دخول الإدارة") : mobile ? "دخول" : "تسجيل الدخول",
+    ariaLabel: isAdminRoute ? (showDashboard ? "لوحة التحكم" : "تسجيل الدخول إلى الإدارة") : "تسجيل الدخول إلى حساب الزائر",
   };
 }
