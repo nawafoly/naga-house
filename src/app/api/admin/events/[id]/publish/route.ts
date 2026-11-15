@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { hasAdminPermission } from "@/features/admin/domain/permissions";
-import { isTrustedUnsplashImageUrl } from "@/features/admin/domain/parse-draft-event";
+import { isTrustedEventImageUrl } from "@/features/admin/domain/parse-draft-event";
 import { getAdminDb, getCurrentAdmin } from "@/features/admin/server/auth";
 import { publishDraftEvent, type PublishResult, type PublishDatabase } from "@/features/admin/server/publish-event";
 import { isTrustedTicketUrl, type TicketProvider } from "@/features/events/domain";
@@ -76,7 +76,7 @@ export async function POST(
       confirmationSlug,
       {
         ticket: (provider, url) => isTrustedTicketUrl(provider as TicketProvider, url),
-        image: isTrustedUnsplashImageUrl,
+        image: isTrustedEventImageUrl,
       },
     );
     return outcome(request, result);
