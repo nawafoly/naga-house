@@ -52,12 +52,12 @@ export function cookieOptions(url: string) {
 export function oauthCookieName() { return STATE_COOKIE; }
 export function sessionCookieName() { return SESSION_COOKIE; }
 
-export async function googleAuthorization(requestUrl: string) {
+export async function googleAuthorization(requestUrl: string, callbackPath = "/api/auth/callback/google") {
   const { id, secret } = getGoogleConfig();
   const state: OAuthState = { state: randomToken(), verifier: randomToken(), issuedAt: Date.now() };
   const cookie = await sealOAuthState(state, secret);
   const origin = new URL(requestUrl).origin;
-  const callbackUrl = `${origin}/api/auth/callback/google`;
+  const callbackUrl = `${origin}${callbackPath}`;
   const params = new URLSearchParams({
     client_id: id,
     redirect_uri: callbackUrl,
@@ -71,7 +71,7 @@ export async function googleAuthorization(requestUrl: string) {
   return { url: `https://accounts.google.com/o/oauth2/v2/auth?${params}`, cookie };
 }
 
-export async function verifiedGoogleProfile(requestUrl: string, code: string, returnedState: string, stateCookie: string | undefined) {
+export async function verifiedGoogleProfile(requestUrl: string, code: string, returnedState: string, stateCookie: string | undefined, callbackPath = "/api/auth/callback/google") {
   const { id, clientSecret, secret } = getGoogleConfig();
   const state = await openOAuthState(stateCookie, secret);
   if (!state || state.state !== returnedState || !code || code.length > 4096) return null;
@@ -83,7 +83,7 @@ export async function verifiedGoogleProfile(requestUrl: string, code: string, re
       code,
       client_id: id,
       client_secret: clientSecret,
-      redirect_uri: `${new URL(requestUrl).origin}/api/auth/callback/google`,
+      redirect_uri: `${new URL(requestUrl).origin}${callbackPath}`,
       grant_type: "authorization_code",
       code_verifier: state.verifier,
     }),
