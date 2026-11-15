@@ -99,7 +99,7 @@ test("publish endpoint requires same-origin, admin session and server-side permi
   assert.match(route, /getCurrentAdmin\(\)/);
   assert.match(route, /hasAdminPermission\(admin\.role, "events\.publish"\)/);
   assert.match(route, /isTrustedTicketUrl/);
-  assert.match(route, /isTrustedUnsplashImageUrl/);
+  assert.match(route, /isTrustedEventImageUrl/);
   assert.match(route, /publishDraftEvent\(/);
   assert.doesNotMatch(route, /export async function GET/);
 });
