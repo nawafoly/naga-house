@@ -73,6 +73,7 @@ export function EventDetailsView({
           <div className="relative mt-7 min-h-[470px] overflow-hidden rounded-[30px] border border-brand-cream/20 bg-brand-ink shadow-[0_22px_65px_rgba(0,0,0,0.22)] sm:min-h-[570px] lg:min-h-[650px] lg:rounded-[38px]">
             <Image
               src={event.coverImageUrl ?? event.imageUrl}
+              unoptimized={(event.coverImageUrl ?? event.imageUrl).startsWith("/event-images/")}
               alt={event.titleAr}
               fill
               priority
