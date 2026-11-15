@@ -74,7 +74,7 @@ export default async function AdminLogin({
           href="/api/auth/google/start"
           className="block rounded-xl bg-[#ed8b52] px-6 py-4 text-center font-bold text-[#222222] transition hover:bg-[#f4aa80]"
         >
-          المتابعة باستخدام Google
+          تسجيل الدخول باستخدام Google
         </a>
 
         <Link
