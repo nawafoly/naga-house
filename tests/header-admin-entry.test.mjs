@@ -10,9 +10,9 @@ const adminLink = readFileSync(new URL("../src/components/layout/AdminHeaderLink
 test("desktop header CTA links to the existing protected admin login", () => {
   assert.match(header, /<AdminHeaderLink\s*\/>/);
   assert.deepEqual(adminEntryForPath("/", false), {
-    href: "/admin/login",
+    href: "/login",
     label: "تسجيل الدخول",
-    ariaLabel: "تسجيل الدخول إلى الإدارة",
+    ariaLabel: "تسجيل الدخول إلى حساب الزائر",
   });
   assert.doesNotMatch(header, /اكتشف الفعاليات/);
   assert.match(login, /getCurrentAdmin\(\)/);
