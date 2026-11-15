@@ -46,6 +46,13 @@ export function isTrustedUnsplashImageUrl(raw: string): boolean {
   } catch { return false; }
 }
 
+/** Only images packaged with this site or direct trusted Unsplash URLs. */
+export function isTrustedEventImageUrl(raw: string): boolean {
+  if (isTrustedUnsplashImageUrl(raw)) return true;
+  return raw.length <= 160 &&
+    /^\/event-images\/[a-z0-9]+(?:-[a-z0-9]+)*\.(?:jpe?g|png|webp|avif)$/.test(raw);
+}
+
 function localSaudiDate(raw: string): string | null {
   if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(raw)) return null;
   const parsed = new Date(`${raw}:00+03:00`);
@@ -79,8 +86,8 @@ export function validateDraftEventForm(form: FormData): DraftEventValidation {
   if (descriptionAr === null) errors.descriptionAr = "الوصف طويل جدًا (الحد 5000 حرف).";
   if (!category || !CATEGORIES.has(category)) errors.category = "اختر تصنيفًا صحيحًا.";
   if (!venue) errors.venue = "أدخل موقعًا داخل جدة.";
-  if (!imageUrl || !isTrustedUnsplashImageUrl(imageUrl)) {
-    errors.imageUrl = "الرابط يجب أن يبدأ بـ https://images.unsplash.com/ ومن دون اسم مستخدم أو منفذ.";
+  if (!imageUrl || !isTrustedEventImageUrl(imageUrl)) {
+    errors.imageUrl = "استخدم رابط https://images.unsplash.com/ أو مسار صورة محلية بصيغة /event-images/name.webp.";
   }
   if (!provider || !PROVIDERS.has(provider)) errors.ticketProvider = "اختر منصة التذاكر من القائمة.";
   if (!ticketUrl || !/^https:\/\//i.test(ticketUrl)) errors.ticketUrl = "أدخل رابط صفحة التذاكر ويجب أن يبدأ بـ https://";
