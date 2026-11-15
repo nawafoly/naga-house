@@ -20,6 +20,7 @@ export default defineConfig(({ mode }) => {
           "/*",
           "!/_next/static/*",
           "!/*/_next/static/*",
+          "!/event-images/*",
         ],
       },
 

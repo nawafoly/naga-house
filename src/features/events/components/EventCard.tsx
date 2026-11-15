@@ -38,6 +38,7 @@ export function EventCard({ event, eager = false, preview = false }: EventCardPr
       <div className="relative aspect-[4/5] overflow-hidden bg-brand-green/10">
         <Image
           src={event.imageUrl}
+          unoptimized={event.imageUrl.startsWith("/event-images/")}
           alt={event.titleAr}
           fill
           loading={eager ? "eager" : "lazy"}

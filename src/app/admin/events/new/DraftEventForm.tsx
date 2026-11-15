@@ -144,9 +144,10 @@ export function DraftEventForm({ eventId, version, initialValues, liveStatus }: 
             <input className={inputClass} name="ticketUrl" defaultValue={initialValues?.ticketUrl ?? ""} type="url" required dir="ltr" maxLength={2048} placeholder="https://webook.com/..." />
 <FieldError field="ticketUrl" errors={fieldErrors} />
           </label>
-          <label className={labelClass}>رابط صورة الفعالية من Unsplash *
-            <input className={inputClass} name="imageUrl" defaultValue={initialValues?.imageUrl ?? ""} type="url" required dir="ltr" maxLength={2048} placeholder="https://images.unsplash.com/..." />
+          <label className={labelClass}>صورة الفعالية (رابط Unsplash أو مسار محلي) *
+            <input className={inputClass} name="imageUrl" defaultValue={initialValues?.imageUrl ?? ""} type="text" required dir="ltr" maxLength={2048} placeholder="/event-images/jeddah-event.webp" />
 <FieldError field="imageUrl" errors={fieldErrors} />
+            <span className="mt-2 block text-xs font-normal text-[#f8eedb]/75">الصور المحلية تحتاج إضافة الملف إلى public/event-images ونشر نسخة جديدة قبل استخدام المسار.</span>
           </label>
           <div className="flex flex-wrap gap-4">
             <button type="submit" disabled={submitting} className="rounded-lg bg-[#ed8b52] px-6 py-3 font-bold text-[#222222]">{submitting ? "جارٍ الحفظ..." : (liveStatus ? "حفظ تحديث الفعالية المنشورة" : eventId ? "حفظ التعديلات" : "حفظ كمسودة")}</button>
