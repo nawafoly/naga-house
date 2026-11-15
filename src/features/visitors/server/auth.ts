@@ -13,7 +13,6 @@ const MAX_IP_ATTEMPTS = 30;
 
 type Row = { id: string; email: string; display_name: string; password_hash: string | null; google_sub: string | null; email_verified: number; status: string };
 export type Visitor = { id: string; email: string; display_name: string; email_verified: boolean };
-type Db = ReturnType<typeof getAdminDb>;
 
 export const visitorSessionCookieName = () => COOKIE;
 export const visitorOAuthCookieName = () => OAUTH_COOKIE;
