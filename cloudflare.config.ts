@@ -27,7 +27,6 @@ export default defineConfig(({ mode }) => {
       env: {
         ASSETS: bindings.assets(),
 
-        IMAGES: bindings.images(),
 
         DB: bindings.d1(
           isStaging
