@@ -74,7 +74,11 @@ export async function googleAuthorization(requestUrl: string, callbackPath = "/a
 export async function verifiedGoogleProfile(requestUrl: string, code: string, returnedState: string, stateCookie: string | undefined, callbackPath = "/api/auth/callback/google") {
   const { id, clientSecret, secret } = getGoogleConfig();
   const state = await openOAuthState(stateCookie, secret);
-  if (!state || state.state !== returnedState || !code || code.length > 4096) return null;
+  if (!state || state.state !== returnedState || !code || code.length > 4096) {
+    // Fixed diagnostic only: never include OAuth codes, tokens, state or cookies.
+    console.warn("NAGA_ADMIN_GOOGLE_AUTH: OAUTH_STATE_INVALID");
+    return null;
+  }
 
   const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
@@ -89,17 +93,29 @@ export async function verifiedGoogleProfile(requestUrl: string, code: string, re
     }),
     cache: "no-store",
   });
-  if (!tokenResponse.ok) return null;
+  if (!tokenResponse.ok) {
+    console.warn("NAGA_ADMIN_GOOGLE_AUTH: TOKEN_EXCHANGE_FAILED");
+    return null;
+  }
   const token: { access_token?: unknown; token_type?: unknown } = await tokenResponse.json();
-  if (typeof token.access_token !== "string" || typeof token.token_type !== "string" || !/^bearer$/i.test(token.token_type)) return null;
+  if (typeof token.access_token !== "string" || typeof token.token_type !== "string" || !/^bearer$/i.test(token.token_type)) {
+    console.warn("NAGA_ADMIN_GOOGLE_AUTH: TOKEN_RESPONSE_INVALID");
+    return null;
+  }
 
   // Google returns a validated subject only for an access token issued by Google.
   const userResponse = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
     headers: { Authorization: `Bearer ${token.access_token}` }, cache: "no-store",
   });
-  if (!userResponse.ok) return null;
+  if (!userResponse.ok) {
+    console.warn("NAGA_ADMIN_GOOGLE_AUTH: USERINFO_FETCH_FAILED");
+    return null;
+  }
   const profile: GoogleProfile = await userResponse.json();
-  if (!profile.sub || !profile.email || !(profile.email_verified === true || profile.email_verified === "true")) return null;
+  if (!profile.sub || !profile.email || !(profile.email_verified === true || profile.email_verified === "true")) {
+    console.warn("NAGA_ADMIN_GOOGLE_AUTH: USERINFO_PROFILE_INVALID");
+    return null;
+  }
   return {
     googleSub: profile.sub,
     email: profile.email.trim().toLowerCase(),
