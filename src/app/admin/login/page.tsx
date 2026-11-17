@@ -14,6 +14,11 @@ export const metadata: Metadata = {
 const messages: Record<string, string> = {
   access: "هذا الحساب غير مصرح له بدخول إدارة NAGA HOUSE.",
   google: "تعذر إكمال تسجيل الدخول من Google. حاول مرة أخرى.",
+  google_state: "تعذر التحقق من جلسة Google المؤقتة (STATE). قد تكون ملفات الارتباط محظورة أو تغيرت الجلسة.",
+  google_token: "رفض Google تبادل رمز تسجيل الدخول (TOKEN). راجع بيانات OAuth Client ID وClient Secret.",
+  google_token_response: "استجابة Google لرمز الدخول غير صالحة (TOKEN_RESPONSE).",
+  google_userinfo: "تعذر جلب معلومات حساب Google بعد تسجيل الدخول (USERINFO).",
+  google_profile: "حساب Google لا يحتوي على بيانات هوية موثقة كافية (PROFILE).",
   config: "إعدادات الدخول غير مكتملة على الخادم. راجع إعدادات OAuth.",
   server: "تعذر الاتصال بنظام الإدارة. حاول لاحقًا أو راجع إعدادات الخادم.",
 };
