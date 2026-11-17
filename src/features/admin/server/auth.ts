@@ -21,6 +21,7 @@ type AdminRow = { id: string; google_sub: string; email: string; display_name: s
 export type AdminSession = Pick<AdminRow, "id" | "email" | "display_name" | "role">;
 
 type GoogleProfile = { sub?: string; email?: string; email_verified?: boolean | string; name?: string };
+export type GoogleAuthFailureStage = "state" | "token" | "token_response" | "userinfo" | "profile";
 
 /** Workerd bindings in Vinext; local dotenv is also read as a server-side fallback. */
 function configValue(key: string): string {
@@ -71,12 +72,20 @@ export async function googleAuthorization(requestUrl: string, callbackPath = "/a
   return { url: `https://accounts.google.com/o/oauth2/v2/auth?${params}`, cookie };
 }
 
-export async function verifiedGoogleProfile(requestUrl: string, code: string, returnedState: string, stateCookie: string | undefined, callbackPath = "/api/auth/callback/google") {
+export async function verifiedGoogleProfile(
+  requestUrl: string,
+  code: string,
+  returnedState: string,
+  stateCookie: string | undefined,
+  callbackPath = "/api/auth/callback/google",
+  onFailure?: (stage: GoogleAuthFailureStage) => void
+) {
   const { id, clientSecret, secret } = getGoogleConfig();
   const state = await openOAuthState(stateCookie, secret);
   if (!state || state.state !== returnedState || !code || code.length > 4096) {
     // Fixed diagnostic only: never include OAuth codes, tokens, state or cookies.
     console.warn("NAGA_ADMIN_GOOGLE_AUTH: OAUTH_STATE_INVALID");
+    onFailure?.("state");
     return null;
   }
 
@@ -95,11 +104,13 @@ export async function verifiedGoogleProfile(requestUrl: string, code: string, re
   });
   if (!tokenResponse.ok) {
     console.warn("NAGA_ADMIN_GOOGLE_AUTH: TOKEN_EXCHANGE_FAILED");
+    onFailure?.("token");
     return null;
   }
   const token: { access_token?: unknown; token_type?: unknown } = await tokenResponse.json();
   if (typeof token.access_token !== "string" || typeof token.token_type !== "string" || !/^bearer$/i.test(token.token_type)) {
     console.warn("NAGA_ADMIN_GOOGLE_AUTH: TOKEN_RESPONSE_INVALID");
+    onFailure?.("token_response");
     return null;
   }
 
@@ -109,11 +120,13 @@ export async function verifiedGoogleProfile(requestUrl: string, code: string, re
   });
   if (!userResponse.ok) {
     console.warn("NAGA_ADMIN_GOOGLE_AUTH: USERINFO_FETCH_FAILED");
+    onFailure?.("userinfo");
     return null;
   }
   const profile: GoogleProfile = await userResponse.json();
   if (!profile.sub || !profile.email || !(profile.email_verified === true || profile.email_verified === "true")) {
     console.warn("NAGA_ADMIN_GOOGLE_AUTH: USERINFO_PROFILE_INVALID");
+    onFailure?.("profile");
     return null;
   }
   return {
