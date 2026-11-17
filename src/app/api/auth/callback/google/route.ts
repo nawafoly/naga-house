@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminSessionMaxAge, cookieOptions, createSessionForGoogle, oauthCookieName, sessionCookieName, verifiedGoogleProfile } from "@/features/admin/server/auth";
+import { adminSessionMaxAge, cookieOptions, createSessionForGoogle, oauthCookieName, sessionCookieName, verifiedGoogleProfile, type GoogleAuthFailureStage } from "@/features/admin/server/auth";
 
 
 
@@ -20,8 +20,12 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const googleUser = await verifiedGoogleProfile(request.url, code, state, request.cookies.get(oauthCookieName())?.value);
-    if (!googleUser) return fail("google");
+    let failureStage: GoogleAuthFailureStage | undefined;
+    const googleUser = await verifiedGoogleProfile(
+      request.url, code, state, request.cookies.get(oauthCookieName())?.value,
+      "/api/auth/callback/google", (stage) => { failureStage = stage; }
+    );
+    if (!googleUser) return fail(failureStage ? `google_${failureStage}` : "google");
     const token = await createSessionForGoogle(googleUser);
     if (!token) return fail("access");
 
