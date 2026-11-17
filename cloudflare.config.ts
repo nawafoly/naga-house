@@ -33,7 +33,7 @@ export default defineConfig(({ mode }) => {
           isStaging
             ? {
                 name: "naga-house-staging-db",
-                id: "4decfc60-ef14-4199-bed2-d74624e083a9",
+                id: "403eb830-9185-46d3-96eb-d004e0fb563d",
               }
             : {
                 name: "naga-house-db",
