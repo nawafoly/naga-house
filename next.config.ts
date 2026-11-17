@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
   },
 
   images: {
+    // Preserve originals: do not use billable image transformation services.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
