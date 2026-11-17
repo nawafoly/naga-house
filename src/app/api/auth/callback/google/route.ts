@@ -14,7 +14,10 @@ export async function GET(request: NextRequest) {
 
   const code = request.nextUrl.searchParams.get("code");
   const state = request.nextUrl.searchParams.get("state");
-  if (!code || !state || request.nextUrl.searchParams.has("error")) return fail("google");
+  if (!code || !state || request.nextUrl.searchParams.has("error")) {
+    console.warn("NAGA_ADMIN_GOOGLE_AUTH: CALLBACK_CODE_OR_STATE_MISSING");
+    return fail("google");
+  }
 
   try {
     const googleUser = await verifiedGoogleProfile(request.url, code, state, request.cookies.get(oauthCookieName())?.value);
@@ -29,6 +32,7 @@ export async function GET(request: NextRequest) {
     return response;
   } catch (error) {
     // Do not leak OAuth code, token, Google credentials, or database SQL in responses/logs.
+    console.error("NAGA_ADMIN_GOOGLE_AUTH:", error instanceof Error && error.message === "NAGA_AUTH_NOT_CONFIGURED" ? "CONFIG_MISSING" : "CALLBACK_UNEXPECTED_ERROR");
     return fail(error instanceof Error && error.message === "NAGA_AUTH_NOT_CONFIGURED" ? "config" : "server");
   }
 }
